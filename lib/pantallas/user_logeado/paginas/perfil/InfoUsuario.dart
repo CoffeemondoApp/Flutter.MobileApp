@@ -4,11 +4,11 @@ import 'dart:async';
 
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Foto.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
-import 'package:coffeemondo/pantallas/user_logeado/bottomBar_perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/bottomBar_perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';

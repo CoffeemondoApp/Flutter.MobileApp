@@ -3,7 +3,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../firebase/autenticacion.dart';
+import '../user_logeado/variables_globales/varaibles_globales.dart';
 
 class crearResenaPage extends StatefulWidget {
   
@@ -22,6 +23,7 @@ class crearResenaPage extends StatefulWidget {
 }
 
 class crearResenaPageState extends State<crearResenaPage> {
+  final GlobalController globalController = GlobalController();
   
   final String inicio = '';
   final String nombre_apellido = '';
@@ -53,20 +55,20 @@ class crearResenaPageState extends State<crearResenaPage> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
 
-  void _getdata() async {
-    // Se declara en user al usuario actual
-    User? user = Auth().currentUser;
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .snapshots()
-        .listen((userData) {
-      setState(() {
-        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
-        nickname = userData.data()!['nickname'];
-      });
-    });
-  }
+  // void _getdata() async {
+  //   // Se declara en user al usuario actual
+  //   User? user = Auth().currentUser;
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(user?.uid)
+  //       .snapshots()
+  //       .listen((userData) {
+  //     setState(() {
+  //       // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
+  //       globalController.nickname.value = userData.data()!['nickname'];
+  //     });
+  //   });
+  // }
 
   // mostrarMapa() {
   //   Navigator.pushReplacement(
@@ -143,7 +145,7 @@ class crearResenaPageState extends State<crearResenaPage> {
         'urlFotografia': await subirImagen(),
         'direccion': _controladordireccion.text,
         'uid_usuario': currentUser?.uid,
-        'nickname_usuario': nickname,
+        'nickname_usuario': globalController.nickname.value,
         'fechaCreacion': "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
       });
       print('Ingreso de resena exitoso.');

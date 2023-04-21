@@ -4,14 +4,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Cafeterias.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/cafeterias/Cafeterias.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
-import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/resenas/resenas.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,7 +19,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
 import '../resenas/resenas.dart';
 import 'index.dart';
-import 'Perfil.dart';
+import 'paginas/perfil/Perfil.dart';
 import 'dart:math' as math;
 
 class EventosDev extends StatefulWidget {
@@ -1377,13 +1377,13 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
-                  onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenasPage(inicio)));
-                  },
+                  // onPressed: () {
+                  //   //Exportar la variable tiempo_inicio
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => ResenasPage(inicio)));
+                  // },
                 ),
                 GButton(
                   icon: Icons.event_note_rounded,
@@ -1402,10 +1402,10 @@ class CustomBottomBar extends StatelessWidget {
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Cafeterias(inicio)));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
                   icon: Icons.search,

@@ -3,8 +3,8 @@ import 'package:coffeemondo/pantallas/bienvenida.dart';
 
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Foto.dart';
 
 import './firebase/autenticacion.dart';
 
