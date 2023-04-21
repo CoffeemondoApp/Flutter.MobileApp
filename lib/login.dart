@@ -3,8 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

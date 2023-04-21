@@ -1,16 +1,15 @@
-import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
-import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Foto.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import '../resenas/resenas.dart';
-import 'Cafeterias.dart';
-import 'Eventos.dart';
+import '../../../resenas/resenas.dart';
+import '../cafeterias/Cafeterias.dart';
 import 'Info.dart';
 import 'InfoUsuario.dart';
 import 'Perfil.dart';
-import 'carrito.dart';
-import 'index.dart';
+import '../carrito/carrito.dart';
+import '../../index.dart';
 
 class CustomBottomBarProfile extends StatefulWidget {
   final inicio;
