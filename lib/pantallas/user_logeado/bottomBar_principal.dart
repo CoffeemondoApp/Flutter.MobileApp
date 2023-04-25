@@ -1,19 +1,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-
-import '../resenas/resenas.dart';
-import 'paginas/cafeterias/Cafeterias.dart';
 import 'paginas/perfil/Perfil.dart';
-import 'paginas/carrito/carrito.dart';
-import 'variables_globales/varaibles_globales.dart';
+
 
 class CustomBottomBar extends StatefulWidget {
   final inicio;
   final Function(int) changeIndex;
-  final GlobalController globalController;
+  final int currentIndex;
 
-  const CustomBottomBar({Key? key, this.inicio, required this.globalController, required this.changeIndex}) : super(key: key);
+  const CustomBottomBar({Key? key, this.inicio, required this.changeIndex, required this.currentIndex}) : super(key: key);
 
   @override
   _CustomBottomBarState createState() => _CustomBottomBarState();
@@ -40,7 +36,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: widget.globalController.currentIndex.value,
+              selectedIndex: widget.currentIndex,
               gap: 6,
               padding: EdgeInsets.all(10),
               tabs: [

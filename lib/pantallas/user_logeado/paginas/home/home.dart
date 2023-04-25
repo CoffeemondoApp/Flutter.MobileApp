@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     if (contPremio < 100) {
-                                      widget.subirPuntos(50);
+                                      widget.subirPuntos(500);
 
                                       setState(() {
                                         contPremio++;

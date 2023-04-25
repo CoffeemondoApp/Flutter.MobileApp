@@ -26,7 +26,8 @@ import 'package:coffeemondo/pantallas/user_logeado/paginas/resenas/resenas.dart'
 class EventosPage extends StatefulWidget {
   final String tiempo_inicio;
   final Function(int) subirPuntos;
-  const EventosPage(this.tiempo_inicio, {super.key, required this.subirPuntos});
+  final Function(int) changeIndex;
+  const EventosPage(this.tiempo_inicio, {super.key, required this.subirPuntos, required this.changeIndex});
 
   @override
   EventosState createState() => EventosState();
@@ -1022,11 +1023,13 @@ class EventosState extends State<EventosPage> {
     ));
   }
 
-  Widget btnAsistir() {
+  Widget btnAsistir(String idEvento) {
+    
+    
     return (GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AsistirEvento()));
+            context, MaterialPageRoute(builder: (context) => AsistirEvento(idEvento: idEvento, changeIndex: widget.changeIndex )));
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.35,
@@ -1106,6 +1109,7 @@ class EventosState extends State<EventosPage> {
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
+                        
                     if (snapshot.hasError) {
                       return Text('Algo salio mal');
                     }
@@ -1113,7 +1117,6 @@ class EventosState extends State<EventosPage> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text("Cargando");
                     }
-
                     return
                         //Crear un ListView.builder para mostrar los eventos obtenidas de firebase de forma horizontal
                         ListView.builder(
@@ -1226,7 +1229,7 @@ class EventosState extends State<EventosPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            btnAsistir(),
+                                            btnAsistir(snapshot.data!.docs[index].id),
                                             GestureDetector(
                                               onTap: () => {
                                                 setState(() {
