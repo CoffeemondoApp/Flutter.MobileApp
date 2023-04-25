@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Calendar/Cliente.dart';
 import 'package:coffeemondo/pantallas/user_logeado/EventoCalendario.dart';
-import 'package:coffeemondo/pantallas/user_logeado/eventos.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/eventos/eventos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';

@@ -1,5 +1,5 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

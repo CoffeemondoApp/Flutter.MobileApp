@@ -1,18 +1,18 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, sort_child_properties_last
 
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/bottomBar_perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/bottomBar_perfil.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import 'bottomBar_principal.dart';
+import '../../bottomBar_principal.dart';
 
 class FotoPage extends StatefulWidget {
   final String inicio;

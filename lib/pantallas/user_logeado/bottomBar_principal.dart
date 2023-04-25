@@ -1,17 +1,15 @@
-import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'paginas/perfil/Perfil.dart';
 
-import '../resenas/resenas.dart';
-import 'Cafeterias.dart';
-import 'Eventos.dart';
-import 'Perfil.dart';
-import 'carrito.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final inicio;
-  final index;
-  const CustomBottomBar({Key? key, this.inicio, this.index}) : super(key: key);
+  final Function(int) changeIndex;
+  final int currentIndex;
+
+  const CustomBottomBar({Key? key, this.inicio, required this.changeIndex, required this.currentIndex}) : super(key: key);
 
   @override
   _CustomBottomBarState createState() => _CustomBottomBarState();
@@ -38,23 +36,22 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: widget.index,
+              selectedIndex: widget.currentIndex,
               gap: 6,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
                   text: 'Inicio', //Exportar la variable tiempo_inicio
+                  onPressed: () {
+                   widget.changeIndex(0);
+                  },
                 ),
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
                   onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenasPage(widget.inicio)));
+                   widget.changeIndex(1);
                   },
                 ),
                 GButton(
@@ -62,20 +59,14 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Cafeterias(widget.inicio)));
+                 widget.changeIndex(2);
                     }),
                 GButton(
                   icon: Icons.event_note,
                   text: 'Eventos',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EventosPage(widget.inicio)));
+                widget.changeIndex(3);
                   },
                 ),
                 GButton(
@@ -83,10 +74,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                   text: 'Carrito',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CarritoPage(widget.inicio)));
+                widget.changeIndex(4);
                   },
                 ),
                 GButton(
@@ -95,10 +83,11 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                  Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(widget.inicio)));
+                  
                   },
                 ),
               ]),

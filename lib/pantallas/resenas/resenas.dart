@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/resenas/editarResena.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';

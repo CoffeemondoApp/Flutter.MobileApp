@@ -3,16 +3,18 @@
 import 'dart:async';
 
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/bottomBar_perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/bottomBar_perfil.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'bottomBar_principal.dart';
+import '../../bottomBar_principal.dart';
 import 'Foto.dart';
+import '../../variables_globales/varaibles_globales.dart';
 
 //importar morado y naranja de Eventos.dart
 const Color colorMorado = Color.fromARGB(255, 84, 14, 148);
@@ -30,24 +32,16 @@ String tab = '';
 var colorScaffold = Color(0xffffebdcac);
 
 class PerfilApp extends State<PerfilPage> {
+  final GlobalController globalController = GlobalController();
+
   @override
   void initState() {
     super.initState();
-    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
-    _getdata();
+    globalController.getData();
   }
 
   // Declaracion de variables de informaicon de usuario
-  String nombre = '';
-  String nickname = '';
-  String cumpleanos = '';
-  String telefono = '';
-  String direccion = '';
-  String urlImage = '';
-  String cafetera = '';
-  String molino = '';
-  String tipo_cafe = '';
-  String marca_cafe = '';
+
 
   String? errorMessage = '';
   bool isLogin = true;
@@ -68,31 +62,7 @@ class PerfilApp extends State<PerfilPage> {
       TextEditingController();
   final TextEditingController _controladordireccion = TextEditingController();
 
-  // Mostrar informacion del usuario en pantalla
-  void _getdata() async {
-    // Se declara en user al usuario actual
-    User? user = Auth().currentUser;
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .snapshots()
-        .listen((userData) {
-      setState(() {
-        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
-        nombre = userData.data()!['nombre'];
-        nickname = userData.data()!['nickname'];
-        cumpleanos = userData.data()!['cumpleanos'];
-        telefono = userData.data()!['telefono'];
-        direccion = userData.data()!['direccion'];
-        urlImage = userData.data()!['urlImage'];
-        cafetera = userData.data()!['cafetera'];
-        molino = userData.data()!['molino'];
-        tipo_cafe = userData.data()!['tipo_cafe'];
-        marca_cafe = userData.data()!['marca_cafe'];
-      });
-    });
-  }
-
+  
   // Cerrar sesion del usuario
   Future<void> cerrarSesion() async {
     await Auth().signOut();
@@ -135,7 +105,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_outlined,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: nombre,
+            hintText: globalController.nombre.value,
             hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.bold,
@@ -193,7 +163,7 @@ class PerfilApp extends State<PerfilPage> {
         border: OutlineInputBorder(),
         prefixIcon:
             Icon(Icons.cake, color: Color.fromARGB(255, 255, 79, 52), size: 24),
-        hintText: cumpleanos,
+        hintText: globalController.cumpleanos.value,
         hintStyle: TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.bold,
@@ -228,7 +198,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.mobile_friendly_outlined,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: telefono,
+            hintText: globalController.telefono.value,
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -247,10 +217,11 @@ class PerfilApp extends State<PerfilPage> {
         print('Editar foto de perfil');
       },
       child: ClipRRect(
+        
         borderRadius: BorderRadius.circular(100),
-        child: urlImage != ''
+        child: Obx(() => globalController.urlImage.value != ''
             ? Image.network(
-                urlImage,
+                globalController.urlImage.value,
                 width: 200,
                 height: 200,
                 fit: BoxFit.cover,
@@ -258,7 +229,7 @@ class PerfilApp extends State<PerfilPage> {
             : Image.asset(
                 'assets/user_img.png',
                 width: 200,
-              ),
+              ),)
       ),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
@@ -288,7 +259,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_rounded,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: nickname,
+            hintText: globalController.nickname.value,
             hintStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -374,7 +345,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.location_on,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: direccion,
+            hintText: globalController.direccion.value,
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -916,11 +887,12 @@ class PerfilApp extends State<PerfilPage> {
       margin: EdgeInsets.only(left: 10),
       //color: Colors.white,
       child: Container(
-          child: Text(
-        (cafetera != '') ? 'En mi casa uso $cafetera' : 'Sin informacion',
+          child: Obx(() => Text(
+        (globalController.cafetera.value != '') ? 'En mi casa uso ${globalController.cafetera.value}' : 'Sin informacion',
         style: TextStyle(
             color: colorNaranja, fontWeight: FontWeight.bold, letterSpacing: 2),
-      )),
+      ))
+          ),
     ));
   }
 
@@ -951,7 +923,7 @@ class PerfilApp extends State<PerfilPage> {
       //color: Colors.white,
       child: Container(
           child: Text(
-        (molino != '') ? 'Uso $molino para moler mi cafe' : 'Sin informacion',
+        (globalController.molino.value != '') ? 'Uso ${globalController.molino.value} para moler mi cafe' : 'Sin informacion',
         style: TextStyle(
             color: colorNaranja, fontWeight: FontWeight.bold, letterSpacing: 2),
       )),
@@ -985,8 +957,8 @@ class PerfilApp extends State<PerfilPage> {
       //color: Colors.white,
       child: Container(
           child: Text(
-        (tipo_cafe != '' && marca_cafe != '')
-            ? 'En casa uso $tipo_cafe de la marca $marca_cafe'
+        (globalController.tipo_cafe.value != '' && globalController.marca_cafe.value != '')
+            ? 'En casa uso ${globalController.tipo_cafe.value} de la marca ${globalController.marca_cafe.value}'
             : 'Sin informacion',
         style: TextStyle(
             color: colorNaranja, fontWeight: FontWeight.bold, letterSpacing: 2),

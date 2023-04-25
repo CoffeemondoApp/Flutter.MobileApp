@@ -67,6 +67,7 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   table_calendar: ^3.0.8
   flutter_inappwebview: ^5.7.2+3
+  get: ^4.6.5
   
 flutter_native_splash:
   color: "#E64921"

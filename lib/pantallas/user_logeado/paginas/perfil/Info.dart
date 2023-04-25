@@ -3,15 +3,15 @@
 import 'package:coffeemondo/firebase/autenticacion.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/user_logeado/bottomBar_perfil.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/bottomBar_perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import 'Direccion.dart';
+import '../../Direccion.dart';
 import 'Perfil.dart';
-import 'bottomBar_principal.dart';
+import '../../bottomBar_principal.dart';
 
 //Obtener variable desde direccion.dart
 
