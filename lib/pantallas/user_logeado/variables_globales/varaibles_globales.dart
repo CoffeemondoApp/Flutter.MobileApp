@@ -27,13 +27,6 @@ class GlobalController extends GetxController {
   RxString tipo_cafe = ''.obs;
   RxString marca_cafe = ''.obs;
 
-  // RxString puntaje_nivel_string = ''.obs;
-  // RxInt niveluser = 0.obs;
-  // RxString inicio = ''.obs;
-  // RxInt contPremio = 0.obs;
-  // Rx<Color> colorScaffold = Rx<Color>(Color(0xffffebdcac));
-
-  //Crear lista de niveles con sus respectivos datos
   List<Map<String, dynamic>> niveles = [
     {'nivel': 1, 'puntaje_nivel': 400, 'porcentaje': 0.0},
     {'nivel': 2, 'puntaje_nivel': 800, 'porcentaje': 0.0},
@@ -102,14 +95,27 @@ class GlobalController extends GetxController {
 
         // puntaje_actual.value =
 
-        print('Si llega la info de database');
-        print('La cafeta ${cafetera.value}');
-        print('nickname ${nickname.value}');
       } else {
         print('Los datos del usuario son nulos');
       }
     } else {
       print('El usuario no existe');
     }
+  }
+}
+
+
+
+
+class CarritoController extends GetxController {
+  var productosEnCarrito = [].obs;
+  
+  void agregarAlCarrito(producto) {
+    productosEnCarrito.add(producto);
+  print(producto);
+  }
+  
+  void removerDelCarrito(int index) {
+    productosEnCarrito.removeAt(index);
   }
 }

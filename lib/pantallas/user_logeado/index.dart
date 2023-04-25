@@ -230,7 +230,7 @@ class IndexPageState extends State<IndexPage> {
 
     void changeIndex(int newNumber) {
       setState(() {
-        index = newNumber;
+        _currentIndex = newNumber;
       });
     }
 
@@ -241,7 +241,7 @@ class IndexPageState extends State<IndexPage> {
           enviarAlGrupo: enviarAlGrupo),
       ResenasPage(widget.tiempo_inicio, globalController: globalController, subirPuntos: subirPuntos,),
       Cafeterias(widget.tiempo_inicio, globalController: globalController),
-      EventosPage(widget.tiempo_inicio , subirPuntos: subirPuntos),
+      EventosPage(widget.tiempo_inicio , subirPuntos: subirPuntos, changeIndex: changeIndex),
       CarritoPage(widget.tiempo_inicio),
       PerfilPage(widget.tiempo_inicio)
       
@@ -258,11 +258,10 @@ class IndexPageState extends State<IndexPage> {
         globalController: globalController,
       ),
     ),
-    body: Padding(padding: EdgeInsets.only(top: 25.0), child: _tabs[index],),
+    body: Padding(padding: EdgeInsets.only(top: 25.0), child: _tabs[_currentIndex],),
     bottomNavigationBar: CustomBottomBar(
       inicio: widget.tiempo_inicio,
-      globalController: globalController,
-      changeIndex: changeIndex,
+      changeIndex: changeIndex, currentIndex: _currentIndex,
     ),
   ),
 );
