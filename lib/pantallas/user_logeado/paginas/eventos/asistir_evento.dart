@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import '../../variables_globales/varaibles_globales.dart';
 
 
-
+//Clase para asistir a un evento
 class AsistirEvento extends StatefulWidget {
   final String idEvento;
   final Function(int) changeIndex;
