@@ -34,9 +34,11 @@ class _AsistirEventoState extends State<AsistirEvento> {
   //Fechas seleccionadas y su cantidad de entradas
   final List<Map<String, dynamic>> _fechasSeleccionadas = [];
 
+
   late DocumentReference
       _docRef; // Declarar la variable y asignarla en initState
 
+ int entradasDisponibles = 0;
   @override
   void initState() {
     super.initState();
@@ -46,9 +48,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
       setState(() {
         infoEvento = eventosData;
         fechaLista = obtenerFechasDeRango(infoEvento['fecha']);
-        // infoCarrito = {'nombre': eventosData['nombre']};
-        print('Sigue la info');
-        print('Info: ${fechaLista}');
+         entradasDisponibles = infoEvento['tickets'].length ~/ fechaLista.length;
       });
     });
   }
@@ -95,16 +95,14 @@ class _AsistirEventoState extends State<AsistirEvento> {
     return formateador.format(date);
   }
 
+//Agregar fecha seleccionada y darle un ticket
 void _handleFechaSelected(DateTime fecha) {
  setState(() {
     int index = _fechasSeleccionadas.indexWhere((element) => element['fecha'] == fecha);
     if (index >= 0) {
       _fechasSeleccionadas.removeAt(index);
-      print('Existe');
     } else {
       _fechasSeleccionadas.add({'fecha': fecha, 'cantidad': 1});
-      print('No Existe');
-
     }
   });
 }
@@ -154,6 +152,7 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
           });
       },
     ),
+    Text('Entradas disponibles: $entradasDisponibles')
   ],
 );
 }).toList();
