@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,12 +24,12 @@ import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/paginas/cafeterias/Cafeterias.dart';
 import 'package:coffeemondo/pantallas/user_logeado/paginas/resenas/resenas.dart';
 
-
 class EventosPage extends StatefulWidget {
   final String tiempo_inicio;
   final Function(int) subirPuntos;
   final Function(int) changeIndex;
-  const EventosPage(this.tiempo_inicio, {super.key, required this.subirPuntos, required this.changeIndex});
+  const EventosPage(this.tiempo_inicio,
+      {super.key, required this.subirPuntos, required this.changeIndex});
 
   @override
   EventosState createState() => EventosState();
@@ -42,18 +44,11 @@ var _visible2 = false;
 
 bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
-TextEditingController nombreEventoCE = TextEditingController();
-TextEditingController direccionEventoCE = TextEditingController();
-TextEditingController latitudEventoCC = TextEditingController();
-TextEditingController longitudEventoCC = TextEditingController();
-TextEditingController fechaEventoCE = TextEditingController();
-TextEditingController imagenEventoCC = TextEditingController();
-TextEditingController descripcionEventoCE = TextEditingController();
-TextEditingController nombreLugarCE = TextEditingController();
 
 bool esLugar = true;
 int cant_imagenesEvento = 0;
 String fechas_guardarEvento = '';
+int cantidadDias = 0;
 
 //Declarar una variable de color from argb
 const Color morado = Color.fromARGB(255, 84, 14, 148);
@@ -61,6 +56,7 @@ const Color naranja = Color.fromARGB(255, 255, 100, 0);
 
 class EventosState extends State<EventosPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
@@ -104,6 +100,7 @@ class EventosState extends State<EventosPage> {
     fechaEventoCE.text = '';
     imagenEventoCC.text = '';
     descripcionEventoCC.text = '';
+    ticketsDia.text = '';
     setState(() {
       imagenSeleccionada = false;
     });
@@ -119,7 +116,10 @@ class EventosState extends State<EventosPage> {
   TextEditingController fechaEventoCE = TextEditingController();
   TextEditingController imagenEventoCC = TextEditingController();
   TextEditingController descripcionEventoCC = TextEditingController();
-
+  TextEditingController direccionEventoCE = TextEditingController();
+  TextEditingController descripcionEventoCE = TextEditingController();
+  TextEditingController ticketsDia = TextEditingController();
+  TextEditingController nombreLugarCE = TextEditingController();
   List<XFile>? imageFiles;
   List<String> imageUrls =
       []; // Lista para almacenar las URL de las imágenes subidas
@@ -138,6 +138,23 @@ class EventosState extends State<EventosPage> {
     }
 
     return urls;
+  }
+
+  final Random random = Random();
+  static const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  String generateRandomString(chars, int length) =>
+      Iterable.generate(length, (idx) => chars[random.nextInt(chars.length)])
+          .join();
+
+  List<String> constructorTickets(int cantEntradas, int dias) {
+    //generar strings random que solo contengan numeros y letras mayusculas y minusculas y que no se repitan
+    List<String> tickets = [];
+    for (var i = 0; i < cantEntradas * dias; i++) {
+      tickets.add(generateRandomString(chars, 20));
+    }
+    return tickets;
   }
 
   _openGallery(BuildContext context) async {
@@ -233,6 +250,8 @@ class EventosState extends State<EventosPage> {
         fechas_guardarEvento != '' ||
         direccionEventoCE.text != '' ||
         descripcionEventoCE.text != '' ||
+        ticketsDia.text != '' ||
+        ticketsDia.text != '0' ||
         imageFiles != null) {
       await FirebaseFirestore.instance
           .collection('eventos')
@@ -240,7 +259,12 @@ class EventosState extends State<EventosPage> {
           .get()
           .then((QuerySnapshot querySnapshot) async {
         if (querySnapshot.docs.isEmpty) {
+          int cantidadTicketsDia = int.parse(ticketsDia.text);
+
           print('No existe la cafeteria');
+          print('ticketsDia ${ticketsDia.text}');
+          print('tickets dia en int $cantidadTicketsDia');
+          print('dias $cantidadDias');
           docRef.set(({
             'nombre': nombreEventoCE.text,
             'lugar': nombreLugarCE.text,
@@ -250,6 +274,7 @@ class EventosState extends State<EventosPage> {
             'ubicacion': direccionEventoCE.text,
             'descripcion': descripcionEventoCE.text,
             'imagen': await subirImagenes(imageFiles!),
+            'tickets': constructorTickets(cantidadTicketsDia, cantidadDias)
           }));
 
           print('Ingreso de cafeteria exitoso.');
@@ -266,6 +291,7 @@ class EventosState extends State<EventosPage> {
       });
     } else {
       print('Se deben ingresar todos los datos');
+      print('FECHA ${fechas_guardarEvento}');
       setState(() {
         _visible2 = true;
         //cambiar el estado de visible2 luego de 3 segundos a false
@@ -456,6 +482,13 @@ class EventosState extends State<EventosPage> {
               });
 
           if (pickeddate != null) {
+            // Convertir fechas seleccionadas a objetos DateTime
+            DateTime fechaInicio = pickeddate.start;
+            DateTime fechaFin = pickeddate.end;
+
+            // Calcular la cantidad de días entre las fechas
+            Duration duracion = fechaFin.difference(fechaInicio);
+
             //Cambiar formato de daterangepicker a dd/mm/yyyy
             var fecha_cambiada = cambiarFormatoFecha(pickeddate);
             var fecha_evento = fecha_cambiada.split(' - ');
@@ -463,6 +496,7 @@ class EventosState extends State<EventosPage> {
             var fecha_evento_fin = fecha_evento[1].split(' ');
             print(fecha_evento_inicio[0] + ' / ' + fecha_evento_fin[0]);
             setState(() {
+              cantidadDias = duracion.inDays + 1;
               fechas_guardarEvento = pickeddate.start.day.toString() +
                   '/' +
                   pickeddate.start.month.toString() +
@@ -733,6 +767,38 @@ class EventosState extends State<EventosPage> {
     ));
   }
 
+  Widget cantidadTicketsPorDiaForm(TextEditingController controller) {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      style: TextStyle(
+          color: morado,
+          letterSpacing: 2,
+          fontSize: 14,
+          fontWeight: FontWeight.bold),
+      controller: controller,
+      maxLength: 5,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+      ],
+      decoration: InputDecoration(
+        prefixIcon:
+            Icon(Icons.confirmation_number_outlined, color: morado, size: 24),
+        hintText: 'Cantidad de tickets por día',
+        hintStyle: TextStyle(
+            color: morado,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 14),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: morado),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: morado),
+        ),
+      ),
+    );
+  }
+
   Widget textFieldDescripcionCafeteria(TextEditingController controller) {
     return TextField(
         style: TextStyle(
@@ -865,6 +931,13 @@ class EventosState extends State<EventosPage> {
                         right: MediaQuery.of(context).size.width * 0.05),
                     child: //crear textfield que se expanda con el texto
                         textFieldDescripcionCafeteria(descripcionEventoCE)),
+                Container(
+                    margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        left: MediaQuery.of(context).size.width * 0.05,
+                        right: MediaQuery.of(context).size.width * 0.05),
+                    child: //crear textfield que se expanda con el texto
+                        cantidadTicketsPorDiaForm(ticketsDia)),
                 GestureDetector(
                   onTap: () {
                     guardarEvento();
@@ -1024,12 +1097,13 @@ class EventosState extends State<EventosPage> {
   }
 
   Widget btnAsistir(String idEvento) {
-    
-    
     return (GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AsistirEvento(idEvento: idEvento, changeIndex: widget.changeIndex )));
+            context,
+            MaterialPageRoute(
+                builder: (context) => AsistirEvento(
+                    idEvento: idEvento, changeIndex: widget.changeIndex)));
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.35,
@@ -1080,7 +1154,7 @@ class EventosState extends State<EventosPage> {
           child: AnimatedContainer(
               width: MediaQuery.of(context).size.width * 0.9,
               height: (abrirCrearCafeteria)
-                  ? MediaQuery.of(context).size.height * 0.7
+                  ? MediaQuery.of(context).size.height * 0.9
                   : MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
                 color: (abrirCrearCafeteria)
@@ -1109,7 +1183,6 @@ class EventosState extends State<EventosPage> {
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
-                        
                     if (snapshot.hasError) {
                       return Text('Algo salio mal');
                     }
@@ -1184,20 +1257,19 @@ class EventosState extends State<EventosPage> {
                                               )),
                                           Container(
                                               //color: Colors.blue,
-                                             
+
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Icon(Icons.attach_money,
-                                                      color: colorMorado),
-                                                  Icon(Icons.edit,
-                                                      color: colorMorado),
-                                                  Icon(Icons.delete,
-                                                      color: colorMorado),
-                                                ],
-                                              ))
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Icon(Icons.attach_money,
+                                                  color: colorMorado),
+                                              Icon(Icons.edit,
+                                                  color: colorMorado),
+                                              Icon(Icons.delete,
+                                                  color: colorMorado),
+                                            ],
+                                          ))
                                         ],
                                       ),
                                       Container(
@@ -1229,7 +1301,8 @@ class EventosState extends State<EventosPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            btnAsistir(snapshot.data!.docs[index].id),
+                                            btnAsistir(
+                                                snapshot.data!.docs[index].id),
                                             GestureDetector(
                                               onTap: () => {
                                                 setState(() {
