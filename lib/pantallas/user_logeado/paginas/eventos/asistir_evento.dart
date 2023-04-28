@@ -48,7 +48,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
       setState(() {
         infoEvento = eventosData;
         fechaLista = obtenerFechasDeRango(infoEvento['fecha']);
-         entradasDisponibles = infoEvento['tickets'].length ~/ fechaLista.length;
+        //  entradasDisponibles = infoEvento['tickets'].length ~/ fechaLista.length;
       });
     });
   }
@@ -152,7 +152,7 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
           });
       },
     ),
-    Text('Entradas disponibles: $entradasDisponibles')
+    // Text('Entradas disponibles:')
   ],
 );
 }).toList();
@@ -214,8 +214,8 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
                             widget.changeIndex(4);
                           }
                         : null,
-                    icon: Icon(Icons.add_shopping_cart),
-                    label: Text('Agregar al carrito'),
+                    icon: Icon(Icons.add_shopping_cart, color: colorNaranja,),
+                    label: Text('Agregar al carrito', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? colorNaranja : Colors.grey),),
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all<Color>(colorMorado),
@@ -227,8 +227,8 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
                             
                           }
                         : null,
-                    icon: Icon(Icons.shopping_cart),
-                    label: Text('Comprar'),
+                    icon: Icon(Icons.shopping_cart, color: colorNaranja),
+                    label: Text('Comprar', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? colorNaranja : Colors.grey)),
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all<Color>(colorMorado),
@@ -260,11 +260,11 @@ class TextoIcono extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icono),
+        Icon(icono, color: colorMorado),
         SizedBox(width: 10),
         Text(
           texto,
-          style: TextStyle(fontSize: tamanoTexto),
+          style: TextStyle(fontSize: tamanoTexto, color: colorMorado),
         ),
       ],
     );

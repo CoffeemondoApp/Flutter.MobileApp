@@ -154,7 +154,7 @@ class IndexPageState extends State<IndexPage> {
       throw Exception('Could not launch $_urlBT');
     }
   }
-
+bool showAppBar = true;
   @override
   Widget build(BuildContext context) {
     //imprimir el tiempo que lleva el usuario en la aplicacion
@@ -233,6 +233,11 @@ class IndexPageState extends State<IndexPage> {
         _currentIndex = newNumber;
       });
     }
+    if (_currentIndex == 4) { // índice de la página del carrito
+    showAppBar = false;
+  } else {
+    showAppBar = true;
+  }
 
     final List<Widget> _tabs = <Widget>[
       Home(
@@ -249,15 +254,20 @@ class IndexPageState extends State<IndexPage> {
     return SafeArea(
   child: Scaffold(
     backgroundColor: colorScaffold,
-    appBar: PreferredSize(
-      preferredSize: Size.fromHeight(120),
-      child: AppBarCustom(
-        getNivel: getNivel,
-        subirNivel: _subirNivel,
-        urlImage: '',
-        globalController: globalController,
+    appBar: showAppBar ? // Condición para mostrar el AppBarCustom
+        PreferredSize(
+          preferredSize: Size.fromHeight(120),
+          child: AppBarCustom(
+            getNivel: getNivel,
+            subirNivel: _subirNivel,
+            urlImage: '',
+            globalController: globalController,
+          ),
+        ) : AppBar(
+        backgroundColor: colorMorado,
+        title: Text('Carrito de compras'),
+        
       ),
-    ),
     body: Padding(padding: EdgeInsets.only(top: 25.0), child: _tabs[_currentIndex],),
     bottomNavigationBar: CustomBottomBar(
       inicio: widget.tiempo_inicio,

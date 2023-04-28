@@ -1096,6 +1096,29 @@ class EventosState extends State<EventosPage> {
     ));
   }
 
+  Widget botonesCirculares(IconData icono, Function onPress) {
+    return InkWell(
+      onTap: () => onPress(),
+      child: Container(
+        width: 30.0,
+        height: 30.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: colorMorado,
+        ),
+        child: Icon(
+          icono,
+          color: colorNaranja,
+          size: 24.0,
+        ),
+      ),
+    );
+  }
+
+  void asistirEvento(String idEvento) {
+    ;
+  }
+
   Widget btnAsistir(String idEvento) {
     return (GestureDetector(
       onTap: () {
@@ -1126,6 +1149,34 @@ class EventosState extends State<EventosPage> {
             )),
       ),
     ));
+  }
+
+  Widget moduloFecha(String fecha) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: colorMorado,
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Container(
+            width: 200,
+            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.event, color: Colors.white, size: 20),
+                Text(
+                  fecha,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _bodyEventos() {
@@ -1170,15 +1221,12 @@ class EventosState extends State<EventosPage> {
         //Container para mostrar las cafeterias
 
         Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25), topRight: Radius.circular(25))),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(children: [
               tituloEventos(),
               Container(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.55,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
@@ -1197,158 +1245,328 @@ class EventosState extends State<EventosPage> {
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
                               return Container(
-                                margin: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02),
+                                margin: EdgeInsets.only(right: 10.0),
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(25),
-                                        bottomRight: Radius.circular(25)),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.2,
-                                        child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: snapshot.data!
-                                                .docs[index]['imagen'].length,
-                                            itemBuilder: (context, index2) {
-                                              return Container(
-                                                child: Image.network(
-                                                  snapshot.data!.docs[index]
-                                                      ['imagen'][index2],
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              );
-                                            }),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 10, top: 10),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                      snapshot.data!.docs[index]
-                                                          ['nombre'],
-                                                      style: TextStyle(
-                                                          color: colorMorado,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16)),
-                                                  Text(
-                                                      snapshot.data!.docs[index]
-                                                          ['ubicacion'],
-                                                      style: TextStyle(
-                                                        color: colorMorado,
-                                                      )),
-                                                ],
-                                              )),
-                                          Container(
-                                              //color: Colors.blue,
-
-                                              child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Icon(Icons.attach_money,
-                                                  color: colorMorado),
-                                              Icon(Icons.edit,
-                                                  color: colorMorado),
-                                              Icon(Icons.delete,
-                                                  color: colorMorado),
-                                            ],
-                                          ))
-                                        ],
-                                      ),
-                                      Container(
-                                        height: 1,
-                                        margin:
-                                            EdgeInsets.only(top: 55, left: 10),
+                                decoration: BoxDecoration(
+                                  color: colorNaranja,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                        height: 100,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: snapshot.data!
+                                                  .docs[index]['imagen'].length,
+                                              itemBuilder: (context, index2) {
+                                                return Container(
+                                                  child: Image.network(
+                                                    snapshot.data!.docs[index]
+                                                        ['imagen'][index2],
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                );
+                                              }),
+                                        )),
+                                    ElevatedButton.icon(
+                                      onPressed: () {},
+                                      label: Container(
                                         child: Text(
-                                            snapshot.data!.docs[index]
-                                                ['descripcion'],
-                                            style: TextStyle(
-                                              color: colorMorado,
-                                            )),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            top: 45, bottom: 25),
-                                        child: Text(
-                                            transformarFechas_string(snapshot
-                                                .data!.docs[index]['fecha']),
-                                            style: TextStyle(
-                                              color: colorMorado,
-                                            )),
-                                      ),
-                                      Container(
-                                        //color: Colors.red,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            btnAsistir(
-                                                snapshot.data!.docs[index].id),
-                                            GestureDetector(
-                                              onTap: () => {
-                                                setState(() {
-                                                  puntaje_actual += 100;
-                                                }),
-                                                print(
-                                                    'puntaje actual $puntaje_actual'),
-                                                // subirPuntaje()
-                                              },
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.35,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.05,
-                                                decoration: BoxDecoration(
-                                                    color: colorMorado,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                20))),
-                                                child: Container(
-                                                    alignment: Alignment(0, 0),
-                                                    child: Text(
-                                                      'Mas información',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xffffebdcac),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                      ),
-                                                    )),
-                                              ),
-                                            )
-                                          ],
+                                          snapshot.data!.docs[index]
+                                              ['ubicacion'],
+                                          style: TextStyle(
+                                              color: colorNaranja,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                      icon: Icon(
+                                        Icons.location_on,
+                                        color: colorNaranja,
+                                        size: 20,
+                                      ),
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                colorMorado),
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Text(snapshot.data!.docs[index]['nombre'],
+                                        style: TextStyle(
+                                            color: colorMorado,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                    Text('Precio:',
+                                        style: TextStyle(
+                                            color: colorMorado,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14)),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: colorMorado,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                snapshot.data!.docs[index]
+                                                    ['descripcion'],
+                                                style: TextStyle(
+                                                  color: colorNaranja,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                    Expanded(child: Container()),
+                                    moduloFecha(
+                                        snapshot.data!.docs[index]['fecha']),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        botonesCirculares(
+                                            Icons.info_outline, () {}),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        botonesCirculares(
+                                            Icons.attach_money_rounded, () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AsistirEvento(
+                                                          idEvento: snapshot.data!.docs[index].id,
+                                                          changeIndex: widget
+                                                              .changeIndex)));
+                                        }),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        botonesCirculares(
+                                            Icons.map_outlined, () {}),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        botonesCirculares(
+                                            Icons.favorite_border_outlined,
+                                            () {})
+                                      ],
+                                    )
+                                  ],
                                 ),
                               );
                             });
+//  Row(
+//                                           children: [
+//                                             InkWell(
+//                                               onTap: () {
+//                                                 // Aquí puedes agregar el código que deseas ejecutar al presionar el botón
+//                                               },
+//                                               child: Container(
+//                                                 width: 30.0,
+//                                                 height: 30.0,
+//                                                 decoration: BoxDecoration(
+//                                                   shape: BoxShape.circle,
+//                                                   color: colorMorado,
+//                                                 ),
+//                                                 child: Icon(
+//                                                   Icons.add,
+//                                                   color: colorNaranja,
+//                                                   size: 24.0,
+//                                                 ),
+//                                               ),
+//                                             )
+//                                           ],
+//                                         )
+
+                    // ListView.builder(
+                    //     scrollDirection: Axis.horizontal,
+                    //     itemCount: snapshot.data!.docs.length,
+                    //     itemBuilder: (context, index) {
+                    //       return Container(
+                    //         margin: EdgeInsets.only(
+                    //             right: MediaQuery.of(context).size.width *
+                    //                 0.02),
+                    //         width: MediaQuery.of(context).size.width * 0.8,
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //             color: Colors.orange,
+                    //             borderRadius: BorderRadius.only(
+                    //                 bottomLeft: Radius.circular(25),
+                    //                 bottomRight: Radius.circular(25)),
+                    //           ),
+                    //           child: Column(
+                    //             children: [
+                    //               SizedBox(
+                    //                 height:
+                    //                     MediaQuery.of(context).size.height *
+                    //                         0.2,
+                    //                 child: ListView.builder(
+                    //                     scrollDirection: Axis.horizontal,
+                    //                     itemCount: snapshot.data!
+                    //                         .docs[index]['imagen'].length,
+                    //                     itemBuilder: (context, index2) {
+                    //                       return Container(
+                    //                         child: Image.network(
+                    //                           snapshot.data!.docs[index]
+                    //                               ['imagen'][index2],
+                    //                           fit: BoxFit.cover,
+                    //                         ),
+                    //                       );
+                    //                     }),
+                    //               ),
+                    //               Row(
+                    //                 mainAxisAlignment:
+                    //                     MainAxisAlignment.spaceBetween,
+                    //                 children: [
+                    //                   Container(
+                    //                       margin: EdgeInsets.only(
+                    //                           left: 10, top: 10),
+                    //                       child: Column(
+                    //                         crossAxisAlignment:
+                    //                             CrossAxisAlignment.start,
+                    //                         children: [
+                    //                           Text(
+                    //                               snapshot.data!.docs[index]
+                    //                                   ['nombre'],
+                    //                               style: TextStyle(
+                    //                                   color: colorMorado,
+                    //                                   fontWeight:
+                    //                                       FontWeight.bold,
+                    //                                   fontSize: 16)),
+                    //                           Text(
+                    //                               snapshot.data!.docs[index]
+                    //                                   ['ubicacion'],
+                    //                               style: TextStyle(
+                    //                                 color: colorMorado,
+                    //                               )),
+                    //                         ],
+                    //                       )),
+                    //                   Container(
+                    //                       //color: Colors.blue,
+
+                    //                       child: Row(
+                    //                     mainAxisAlignment:
+                    //                         MainAxisAlignment.spaceBetween,
+                    //                     children: [
+                    //                       Icon(Icons.attach_money,
+                    //                           color: colorMorado),
+                    //                       Icon(Icons.edit,
+                    //                           color: colorMorado),
+                    //                       Icon(Icons.delete,
+                    //                           color: colorMorado),
+                    //                     ],
+                    //                   ))
+                    //                 ],
+                    //               ),
+                    //               Container(
+                    //                 height: 1,
+                    //                 margin:
+                    //                     EdgeInsets.only(top: 55, left: 10),
+                    //                 child: Text(
+                    //                     snapshot.data!.docs[index]
+                    //                         ['descripcion'],
+                    //                     style: TextStyle(
+                    //                       color: colorMorado,
+                    //                     )),
+                    //               ),
+                    //               Container(
+                    //                 margin: EdgeInsets.only(
+                    //                     top: 45, bottom: 25),
+                    //                 child: Text(
+                    //                     transformarFechas_string(snapshot
+                    //                         .data!.docs[index]['fecha']),
+                    //                     style: TextStyle(
+                    //                       color: colorMorado,
+                    //                     )),
+                    //               ),
+                    //               Container(
+                    //                 //color: Colors.red,
+                    //                 child: Row(
+                    //                   mainAxisAlignment:
+                    //                       MainAxisAlignment.center,
+                    //                   crossAxisAlignment:
+                    //                       CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     btnAsistir(
+                    //                         snapshot.data!.docs[index].id),
+                    //                     GestureDetector(
+                    //                       onTap: () => {
+                    //                         setState(() {
+                    //                           puntaje_actual += 100;
+                    //                         }),
+                    //                         print(
+                    //                             'puntaje actual $puntaje_actual'),
+                    //                         // subirPuntaje()
+                    //                       },
+                    //                       child: Container(
+                    //                         width: MediaQuery.of(context)
+                    //                                 .size
+                    //                                 .width *
+                    //                             0.35,
+                    //                         height: MediaQuery.of(context)
+                    //                                 .size
+                    //                                 .height *
+                    //                             0.05,
+                    //                         decoration: BoxDecoration(
+                    //                             color: colorMorado,
+                    //                             borderRadius:
+                    //                                 BorderRadius.all(
+                    //                                     Radius.circular(
+                    //                                         20))),
+                    //                         child: Container(
+                    //                             alignment: Alignment(0, 0),
+                    //                             child: Text(
+                    //                               'Mas información',
+                    //                               style: TextStyle(
+                    //                                 color:
+                    //                                     Color(0xffffebdcac),
+                    //                                 fontWeight:
+                    //                                     FontWeight.bold,
+                    //                                 fontSize: 16,
+                    //                               ),
+                    //                             )),
+                    //                       ),
+                    //                     )
+                    //                   ],
+                    //                 ),
+                    //               )
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       );
+                    //     });
                   },
                 ),
               )
