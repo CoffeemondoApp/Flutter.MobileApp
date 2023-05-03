@@ -98,11 +98,11 @@ class _AsistirEventoState extends State<AsistirEvento> {
 //Agregar fecha seleccionada y darle un ticket
 void _handleFechaSelected(DateTime fecha) {
  setState(() {
-    int index = _fechasSeleccionadas.indexWhere((element) => element['fecha'] == fecha);
+    int index = _fechasSeleccionadas.indexWhere((element) =>  element['fecha'] == fecha);
     if (index >= 0) {
       _fechasSeleccionadas.removeAt(index);
     } else {
-      _fechasSeleccionadas.add({'fecha': fecha, 'cantidad': 1});
+      _fechasSeleccionadas.add({'nombre':infoEvento['nombre'],'fecha': fecha, 'cantidad': 1, 'precio': 1000});
     }
   });
 }
@@ -200,15 +200,14 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
               ),
               Expanded(child: Container()),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                
                 children: [
                   ElevatedButton.icon(
                     onPressed: _fechasSeleccionadas.isNotEmpty
                         ? () {
-                          setState(() {
-                            infoCarrito = {'nombre': infoEvento['nombre'], 'fechasAsistir': _fechasSeleccionadas};
-                          });
-                          carritoController.agregarAlCarrito(infoCarrito);
+                          
+                          carritoController.agregarAlCarrito(_fechasSeleccionadas);
+
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                             widget.changeIndex(4);
@@ -221,19 +220,7 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
                           MaterialStateProperty.all<Color>(colorMorado),
                     ),
                   ),
-                  ElevatedButton.icon(
-                     onPressed: _fechasSeleccionadas.isNotEmpty
-                        ? () {
-                            
-                          }
-                        : null,
-                    icon: Icon(Icons.shopping_cart, color: colorNaranja),
-                    label: Text('Comprar', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? colorNaranja : Colors.grey)),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(colorMorado),
-                    ),
-                  ),
+                  
                 ],
               )
             ],

@@ -11,6 +11,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FirebaseMessagingService().setupFirebase();
   Get.put(GlobalController());
+  Get.put(CarritoController());
   runApp(const MyApp());
 }
 

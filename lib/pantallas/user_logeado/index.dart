@@ -38,6 +38,7 @@ int index = 0;
 class IndexPageState extends State<IndexPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final GlobalController globalController = GlobalController();
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE

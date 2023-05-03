@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:pay/pay.dart';
+import 'payment_configurations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +16,7 @@ import '../cafeterias/Cafeterias.dart';
 
 import '../perfil/Perfil.dart';
 import 'dart:math' as math;
+import 'package:intl/intl.dart';
 
 import '../../bottomBar_principal.dart';
 
@@ -30,15 +33,31 @@ var colorScaffold = Color(0xffffebdcac);
 class CarritoPageState extends State<CarritoPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  late GoogleMapController googleMapController;
-  final CarritoController carritoController = Get.put(CarritoController());
 
+  final CarritoController carritoController = Get.put(CarritoController());
+  // final CarritoController carritoController = Get.find();
+  final _paymentItems = <PaymentItem>[];
+
+  bool mostrarBotonPago = true;
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
   @override
   void initState() {
     super.initState();
-    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
+
+    for (var producto in carritoController.productosEnCarrito) {
+      var precioTotal = producto['precio'] * producto['cantidad'];
+
+      if (!_paymentItems.any((item) => item.label == producto['nombre'])) {
+        _paymentItems.add(
+          PaymentItem(
+            label: producto['nombre'],
+            amount: precioTotal.toString(),
+            status: PaymentItemStatus.final_price,
+          ),
+        );
+      }
+    }
   }
 
   bool _visible = false;
@@ -46,175 +65,150 @@ class CarritoPageState extends State<CarritoPage> {
   @override
   Widget build(BuildContext context) {
     print('El carrito: ${carritoController.productosEnCarrito}');
-    // TODO: implement build
-    return Container(
-      child: Column(
-        children: [
-          SizedBox(height: 20),
-          Center(
-            child: Text(
-              "Tu orden",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Expanded(
-              child: Obx(() => ListView.builder(
-                    itemCount: carritoController.productosEnCarrito.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final producto =
-                          carritoController.productosEnCarrito[index];
-                      List<Map<String, dynamic>> fechasAsistir =
-                          producto['fechasAsistir'];
+    print('El  directo a pagar: ${_paymentItems}');
 
-                      return Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      // Row(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.spaceBetween,
-                                      //   children: [
-                                      //     Expanded(
-                                      //       child: Text(
-                                      //         producto['nombre'] ?? '',
-                                      //         overflow: TextOverflow.ellipsis,
-                                      //         style: TextStyle(
-                                      //             fontWeight: FontWeight.bold),
-                                      //       ),
-                                      //     ),
-                                      //     SizedBox(
-                                      //       width: 120,
-                                      //       child: Text(
-                                      //           DateFormat('dd/MM/yyyy').format(
-                                      //             compra['fecha']?.toLocal() ??
-                                      //                 DateTime.now(),
-                                      //           ),
-                                      //           overflow: TextOverflow.ellipsis,
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //                   FontWeight.bold)),
-                                      //     ),
-                                      //     Expanded(
-                                      //       child: SizedBox(
-                                      //         width: 100,
-                                      //         child: Wrap(
-                                      //           spacing: 10,
-                                      //           children: [
-                                      //             Row(
-                                      //               children: [
-                                      //                 IconButton(
-                                      //                   icon:
-                                      //                       Icon(Icons.remove),
-                                      //                   onPressed: () {
-                                      //                     setState(() {
-                                      //                       if (cantidad > 1) {
-                                      //                         listaCompras[index]
-                                      //                                     [
-                                      //                                     'compra${index + 1}']![
-                                      //                                 'cantidad'] =
-                                      //                             (cantidad - 1)
-                                      //                                 .toString();
-                                      //                         _total -=
-                                      //                             precioUnitario;
-                                      //                         print(
-                                      //                             listaCompras);
-                                      //                       } else {
-                                      //                         listaCompras[
-                                      //                                     index]
-                                      //                                 [
-                                      //                                 'compra${index + 1}']![
-                                      //                             'cantidad'] = '1';
-                                      //                       }
-                                      //                     });
-                                      //                   },
-                                      //                 ),
-                                      //                 Text(
-                                      //                   '$cantidad',
-                                      //                   style: TextStyle(
-                                      //                       fontSize: 18,
-                                      //                       fontWeight:
-                                      //                           FontWeight
-                                      //                               .bold),
-                                      //                 ),
-                                      //                 IconButton(
-                                      //                   icon: Icon(Icons.add),
-                                      //                   onPressed: () {
-                                      //                     setState(() {
-                                      //                       listaCompras[index][
-                                      //                                   'compra${index + 1}']![
-                                      //                               'cantidad'] =
-                                      //                           (cantidad + 1)
-                                      //                               .toString();
-                                      //                       _total +=
-                                      //                           precioUnitario;
-                                      //                       print(listaCompras);
-                                      //                     });
-                                      //                   },
-                                      //                 ),
-                                      //               ],
-                                      //             ),
-                                      //           ],
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //     Expanded(
-                                      //       child: Text(
-                                      //           '\$${precioTotal.toString()}',
-                                      //           overflow: TextOverflow.ellipsis,
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //                   FontWeight.bold)),
-                                      //     ),
-                                      //     IconButton(
-                                      //       icon: Icon(Icons.delete),
-                                      //       onPressed: () {
-                                      //         setState(() {
-                                      //           listaCompras.removeAt(index);
-                                      //         });
-                                      //       },
-                                      //     ),
-                                      //   ],
-                                      // ),
-                                      Divider(),
-                                    ],
-                                  );
+    // TODO: implement build
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Center(
+              child: Text(
+                "Tu orden",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+                child: Obx(
+              () => carritoController.productosEnCarrito.isEmpty
+                  ? Center(
+                      child: Column(
+                        children: [
+                          Text('Tu carrito está vacío.'),
+                          Text('¡Visita la sección de eventos y participa!'),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: carritoController.productosEnCarrito.length,
+                      itemBuilder: (context, index) {
+                        final producto =
+                            carritoController.productosEnCarrito[index];
+
+                        return ProductoEnCarritoWidget(
+                          producto: producto,
+                          onRemover: () {
+                            carritoController.removerDelCarrito(index);
+                          },
+                          onAumentar: () {
+                            carritoController.aumentarCantidad(index);
+                          },
+                          onDisminuir: () {
+                            carritoController.disminuirCantidad(index);
+                          },
+                        );
+                      },
+                    ),
+            )),
+            Expanded(child: Container()),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (mostrarBotonPago)
+                  ElevatedButton(
+                    onPressed: () {
+                      // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
+                      if (carritoController.productosEnCarrito.isNotEmpty) {
+                        setState(() {
+                          mostrarBotonPago = false;
+                        });
+                      }
+                      
                     },
-                  )))
-        ],
+                    child: Text('Proceder con la compra'),
+                  ),
+                if (!mostrarBotonPago)
+                  GooglePayButton(
+                    paymentConfiguration:
+                        PaymentConfiguration.fromJsonString(defaultGooglePay),
+                    paymentItems: _paymentItems,
+                    width: double.infinity,
+                    type: GooglePayButtonType.pay,
+                    margin: const EdgeInsets.only(top: 15.0),
+                    onPaymentResult: (result) =>
+                        debugPrint('Payment Result $result'),
+                    loadingIndicator: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
-//     Obx(() => ListView.builder(
-//   itemCount: carritoController.productosEnCarrito.length,
-//   itemBuilder: (BuildContext context, int index) {
-//     final producto = carritoController.productosEnCarrito[index];
-//     List<Map<String, dynamic>> fechasAsistir = producto['fechasAsistir'];
+  }
+}
 
-//     return ListTile(
-//       title: Text(producto['nombre']),
-//       subtitle: ListView.builder(
-//         shrinkWrap: true,
-//         physics: ClampingScrollPhysics(),
-//         itemCount: fechasAsistir.length,
-//         itemBuilder: (BuildContext context, int index) {
-//           final fecha = fechasAsistir[index];
-//           return Text('${fecha['fecha']} - Cantidad: ${fecha['cantidad']}');
-//         },
-//       ),
-//       trailing: IconButton(
-//         icon: Icon(Icons.delete),
-//         onPressed: () {
-//           carritoController.removerDelCarrito(index);
-//         },
-//       ),
-//     );
-//   },
-// ));
+class ProductoEnCarritoWidget extends StatelessWidget {
+  final Map<String, dynamic> producto;
+  final VoidCallback onRemover;
+  final VoidCallback onAumentar;
+  final VoidCallback onDisminuir;
+
+  const ProductoEnCarritoWidget({
+    required this.producto,
+    required this.onRemover,
+    required this.onAumentar,
+    required this.onDisminuir,
+  });
+
+  String formatoFecha(DateTime fecha) {
+    final DateFormat formatter = DateFormat('dd-MM-yyyy');
+    final String formatted = formatter.format(fecha);
+    return formatted;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(producto['nombre']),
+              Text(formatoFecha(producto['fecha']))
+            ],
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: onDisminuir,
+            ),
+            Text(producto['cantidad'].toString()),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: onAumentar,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: onRemover,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

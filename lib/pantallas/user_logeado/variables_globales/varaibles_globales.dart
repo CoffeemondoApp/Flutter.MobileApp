@@ -94,7 +94,6 @@ class GlobalController extends GetxController {
         marca_cafe.value = datosUsuario['marca_cafe'];
 
         // puntaje_actual.value =
-
       } else {
         print('Los datos del usuario son nulos');
       }
@@ -104,18 +103,40 @@ class GlobalController extends GetxController {
   }
 }
 
-
-
-
 class CarritoController extends GetxController {
   var productosEnCarrito = [].obs;
-  
-  void agregarAlCarrito(producto) {
-    productosEnCarrito.add(producto);
-  print(producto);
+
+  void agregarAlCarrito(productos) {
+    for (var producto in productos) {
+      bool encontrado = false;
+      for (var item in productosEnCarrito) {
+        if (item['nombre'] == producto['nombre'] &&
+            item['fecha'] == producto['fecha']) {
+          // Si el producto ya existe en el carrito, aumentar la cantidad
+          item['cantidad'] += producto['cantidad'];
+          encontrado = true;
+          break;
+        }
+      }
+      if (!encontrado) {
+        // Si el producto no existe en el carrito, agregarlo
+        productosEnCarrito.add(producto);
+      }
+    }
   }
-  
+
   void removerDelCarrito(int index) {
     productosEnCarrito.removeAt(index);
+  }
+
+  void aumentarCantidad(int index) {
+    productosEnCarrito[index]['cantidad']++;
+  }
+
+  void disminuirCantidad(int index) {
+    productosEnCarrito[index]['cantidad']--;
+    if (productosEnCarrito[index]['cantidad'] <= 0) {
+      removerDelCarrito(index);
+    }
   }
 }
