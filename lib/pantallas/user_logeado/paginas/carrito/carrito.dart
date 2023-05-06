@@ -121,35 +121,52 @@ class CarritoPageState extends State<CarritoPage> {
             Expanded(child: Container()),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (mostrarBotonPago)
-                  ElevatedButton(
-                    onPressed: () {
-                      // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
-                      if (carritoController.productosEnCarrito.isNotEmpty) {
-                        setState(() {
-                          mostrarBotonPago = false;
-                        });
-                      }
-                      
-                    },
-                    child: Text('Proceder con la compra'),
+              children: [
+                GooglePayButton(
+                  paymentConfiguration:
+                      PaymentConfiguration.fromJsonString(defaultGooglePay),
+                  paymentItems: _paymentItems,
+                  childOnError: const Text('Google Pay no es compatible'),
+                  width: double.infinity,
+                  type: GooglePayButtonType.pay,
+                  margin: const EdgeInsets.only(top: 15.0),
+                  onPaymentResult: (result) =>
+                      debugPrint('Payment Result $result'),
+                  loadingIndicator: const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                if (!mostrarBotonPago)
-                  GooglePayButton(
-                    paymentConfiguration:
-                        PaymentConfiguration.fromJsonString(defaultGooglePay),
-                    paymentItems: _paymentItems,
-                    width: double.infinity,
-                    type: GooglePayButtonType.pay,
-                    margin: const EdgeInsets.only(top: 15.0),
-                    onPaymentResult: (result) =>
-                        debugPrint('Payment Result $result'),
-                    loadingIndicator: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                ),
               ],
+              // children: <Widget>[
+              //   if (mostrarBotonPago)
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
+              //         if (carritoController.productosEnCarrito.isNotEmpty) {
+              //           setState(() {
+              //             mostrarBotonPago = false;
+              //           });
+              //         }
+
+              //       },
+              //       child: Text('Proceder con la compra'),
+              //     ),
+              //   if (!mostrarBotonPago)
+              //     GooglePayButton(
+              //       paymentConfiguration:
+              //           PaymentConfiguration.fromJsonString(defaultGooglePay),
+              //       paymentItems: _paymentItems,
+              //       childOnError: const Text('Google Pay no es compatible'),
+              //       width: double.infinity,
+              //       type: GooglePayButtonType.pay,
+              //       margin: const EdgeInsets.only(top: 15.0),
+              //       onPaymentResult: (result) =>
+              //           debugPrint('Payment Result $result'),
+              //       loadingIndicator: const Center(
+              //         child: CircularProgressIndicator(),
+              //       ),
+              //     ),
+              // ],
             ),
           ],
         ),

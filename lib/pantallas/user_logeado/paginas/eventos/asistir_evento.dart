@@ -102,7 +102,7 @@ void _handleFechaSelected(DateTime fecha) {
     if (index >= 0) {
       _fechasSeleccionadas.removeAt(index);
     } else {
-      _fechasSeleccionadas.add({'nombre':infoEvento['nombre'],'fecha': fecha, 'cantidad': 1, 'precio': 1000});
+      _fechasSeleccionadas.add({'nombre':infoEvento['nombre'],'fecha': fecha, 'cantidad': 1, 'precio': 0.1});
     }
   });
 }
@@ -128,33 +128,54 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
     ));
   }
 
-  return Wrap(
-  crossAxisAlignment: WrapCrossAlignment.center,
-  children: [
-    Padding(
-      padding: EdgeInsets.only(right: 16),
-      child: Text(
-        formatoFecha(fechaSeleccionada['fecha']),
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+return Container(
+  margin: EdgeInsets.only(bottom: 25),
+  decoration: BoxDecoration(
+    border: Border(bottom: BorderSide(color: colorNaranja, width: 2.0)),
+  ),
+  child: Wrap(
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: [
+      Padding(
+        padding: EdgeInsets.only(right: 16),
+        child: Row(
+          children: [
+            Text('Fecha ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorMorado)),
+            Text(
+              formatoFecha(fechaSeleccionada['fecha']),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorMorado),
+            ),
+          ],
+        ),
       ),
+      Row(children: [
+        Text('Cantidad', style: TextStyle(fontSize: 18, color: colorMorado)),
+        SizedBox(width: 10),
+        DropdownButton<String>(
+          // value: null,
+          dropdownColor: Colors.white,
+          icon: Icon(Icons.arrow_drop_down, color: colorMorado),
+          iconEnabledColor: colorMorado,
+          underline: Container(
+      height: 1, 
+      color: colorMorado, // Color de la línea
     ),
-    DropdownButton<String>(
-      // value: null,
-    
-      hint: fechaSeleccionada['cantidad'] != null
-          ? Text(fechaSeleccionada['cantidad'].toString())
-          : Text('Seleccionar opción'),
-    
-      items: items,
-      onChanged: (value) {
-          setState(() {
-            fechaSeleccionada['cantidad'] = int.parse(value!);
-          });
-      },
-    ),
-    // Text('Entradas disponibles:')
-  ],
+          hint: fechaSeleccionada['cantidad'] != null
+            ? Text(fechaSeleccionada['cantidad'].toString(), style: TextStyle(fontSize: 18, color: colorMorado))
+            : Text('Seleccionar opción'),
+          items: items,
+          onChanged: (value) {
+            setState(() {
+              fechaSeleccionada['cantidad'] = int.parse(value!);
+            });
+          },
+        ),
+      ]),
+      // Text('Entradas disponibles:')
+    ],
+  ),
 );
+
 }).toList();
 
 
@@ -176,7 +197,8 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Text(infoEvento['nombre']),),
+              Center(child: Text(infoEvento['nombre'], style: TextStyle(fontSize: 25)),),
+              SizedBox(height: 10,),
               TextoIcono(
                 texto: 'Fechas disponibles:',
                 icono: Icons.calendar_month,

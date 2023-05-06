@@ -95,7 +95,6 @@ const String defaultGooglePay = '''{
       "countryCode": "US",
       "currencyCode": "USD",
     "totalPriceStatus": "FINAL",
-    "totalPrice": "5678"
     }
   }
 }''';
