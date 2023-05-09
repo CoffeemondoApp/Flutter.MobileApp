@@ -29,8 +29,6 @@ bool abrirCrearCafeteria = false;
 
 bool esLugar = true;
 int cant_imagenesEvento = 0;
-String fechas_guardarEvento = '';
-int cantidadDias = 0;
 const Color morado = Color.fromARGB(255, 84, 14, 148);
 const Color naranja = Color.fromARGB(255, 255, 100, 0);
 
@@ -63,30 +61,37 @@ class _CrearEventoState extends State<CrearEvento> {
   void _limpiarCafeteria() async {
     // Se limpian los campos de texto
     nombreEventoCE.text = '';
+    nombreLugarCE.text = '';
+    fechaEventoCE.text = '';
     direccionEventoCC.text = '';
     latitudEventoCC.text = '';
     longitudEventoCC.text = '';
-    fechaEventoCE.text = '';
-    imagenEventoCC.text = '';
-    descripcionEventoCC.text = '';
-    ticketsDia.text = '';
+    imageFiles = [];
+    descripcionEventoCE.text = '';
+    capacidadMaximaPersonas.text = '';
+    precioUnidad.text = '';
+    separarEntradas.text = '';
     setState(() {
       imagenSeleccionada = false;
     });
   }
 
+  String fechas_guardarEvento = '';
+  int cantidadDias = 0;
+  double ingresosEstimados = 0;
+  double ingresosNeto = 0;
+  double comision = 0;
+  String estado = '';
   TextEditingController nombreEventoCE = TextEditingController();
+  TextEditingController nombreLugarCE = TextEditingController();
+  TextEditingController fechaEventoCE = TextEditingController();
   TextEditingController direccionEventoCC = TextEditingController();
   TextEditingController latitudEventoCC = TextEditingController();
   TextEditingController longitudEventoCC = TextEditingController();
-  TextEditingController fechaEventoCE = TextEditingController();
-  TextEditingController imagenEventoCC = TextEditingController();
-  TextEditingController descripcionEventoCC = TextEditingController();
-  TextEditingController direccionEventoCE = TextEditingController();
   TextEditingController descripcionEventoCE = TextEditingController();
-  TextEditingController ticketsDia = TextEditingController();
   TextEditingController capacidadMaximaPersonas = TextEditingController();
-  TextEditingController nombreLugarCE = TextEditingController();
+  TextEditingController precioUnidad = TextEditingController();
+  TextEditingController separarEntradas = TextEditingController();
   List<XFile>? imageFiles;
   List<String> imageUrls =
       []; // Lista para almacenar las URL de las imágenes subidas
@@ -115,10 +120,11 @@ class _CrearEventoState extends State<CrearEvento> {
       Iterable.generate(length, (idx) => chars[random.nextInt(chars.length)])
           .join();
 
-  List<String> constructorTickets(int cantEntradas, int dias) {
+  List<String> constructorTickets(String capacidadMaxima, int dias) {
+    int cantidadTicketsDia = int.parse(capacidadMaximaPersonas.text);
     //generar strings random que solo contengan numeros y letras mayusculas y minusculas y que no se repitan
     List<String> tickets = [];
-    for (var i = 0; i < cantEntradas * dias; i++) {
+    for (var i = 0; i < cantidadTicketsDia * dias; i++) {
       tickets.add(generateRandomString(chars, 20));
     }
     return tickets;
@@ -163,143 +169,71 @@ class _CrearEventoState extends State<CrearEvento> {
 
   final ImagePicker _picker = ImagePicker();
 
-  Widget moduloCrearEvento() {
-    var edgeInsets = EdgeInsets.only(
-        top: MediaQuery.of(context).size.height * 0.02,
-        left: MediaQuery.of(context).size.width * 0.05,
-        right: MediaQuery.of(context).size.width * 0.05);
-    return SingleChildScrollView(
-      child: (Container(
-          child: Column(
-        children: [
-          Container(
-              margin: edgeInsets, child: textFieldNombreEvento(nombreEventoCE)),
-          Container(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                child: Text(
-                  'Cafeteria',
-                  style: TextStyle(
-                      color: morado,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Switch(
-                value: esLugar,
-                onChanged: (value) {
-                  setState(() {
-                    esLugar = value;
-                    if (value) {
-                      direccionEventoCC.text = '';
-                      nombreLugarCE.text = '';
-                    }
-                    nombreEventoCE.text = '';
-                    //direccionCafeteriaCC.text = '';
-                  });
-                },
-                //activeTrackColor: Color.fromARGB(255, 255, 79, 52),
-                inactiveThumbColor: morado,
-                activeColor: morado,
-                inactiveTrackColor: Color.fromARGB(113, 102, 0, 255),
-              ),
-              Container(
-                child: Text(
-                  'Lugar',
-                  style: TextStyle(
-                      color: morado,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          )),
-          Container(
-              margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.05,
-                  right: MediaQuery.of(context).size.width * 0.05),
-              child: (!esLugar)
-                  ? autoCompleteNombreCafeteria(nombreLugarCE)
-                  : textFieldNombreCafeteria(nombreLugarCE)),
-          Container(
-              margin: edgeInsets,
-              child: textFieldFechaCafeteria(fechaEventoCE)),
-          Container(
-              margin: edgeInsets,
-              child: textFieldUbicacionCafeteria(direccionEventoCC)),
-          Container(
-              margin: edgeInsets,
-              child: GestureDetector(
-                child: textFieldImagenCafeteria(),
-                onTap: () {
-                  _openGallery(context);
-                },
-              )),
-          Container(
-              margin: edgeInsets,
-              child: //crear textfield que se expanda con el texto
-                  textFieldDescripcionCafeteria(descripcionEventoCE)),
-          Container(
-              margin: edgeInsets,
-              child: //crear textfield que se expanda con el texto
-                  Text(
-                'Configurar entradas al evento',
-                style: TextStyle(
-                    color: morado, fontSize: 25, fontWeight: FontWeight.w900),
-              )),
-          Container(
-            margin: edgeInsets,
-            child: // Capacidad personas
-                customTextFormField(capacidadMaximaPersonas, 'Capacidad máxima de personas',
-                    Icons.person_outline, 5),
-          ),
-          Container(
-            margin: edgeInsets,
-            child: //Precio unitario tickets
-                customTextFormField(ticketsDia, 'Precio unidad',
-                    Icons.confirmation_number_outlined, 10),
-          ),
-          Container(
-            margin: edgeInsets,
-            child: //Cantidad tickets
-                customTextFormField(ticketsDia, 'Separar entradas',
-                    Icons.confirmation_number_outlined, 5),
-          ),
-          GestureDetector(
-            onTap: () {
-              // guardarEvento();
-            },
-            child: Container(
-                decoration: BoxDecoration(
-                    color: morado, borderRadius: BorderRadius.circular(10)),
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.04,
-                ),
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.02,
-                      bottom: MediaQuery.of(context).size.height * 0.02,
-                      left: MediaQuery.of(context).size.width * 0.2,
-                      right: MediaQuery.of(context).size.width * 0.2),
-                  child: Text(
-                    'Generar evento',
-                    style: TextStyle(
-                        color: colorScaffold,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  ),
-                )),
-          )
-        ],
-      ))),
-    );
+//Crear el evento y enviarlo a la base de datos
+  Future<void> guardarEvento() async {
+    User? user = Auth().currentUser;
+
+    if (nombreEventoCE.text != '' &&
+        nombreLugarCE.text != '' &&
+        fechaEventoCE.text != '' &&
+        direccionEventoCC.text != '' &&
+        descripcionEventoCE.text != '' &&
+        capacidadMaximaPersonas.text != '' &&
+        precioUnidad.text != '' &&
+        separarEntradas.text != '' &&
+        imageFiles != null) {
+      await FirebaseFirestore.instance
+          .collection('eventos')
+          .where('nombre', isEqualTo: nombreEventoCE.text)
+          .get()
+          .then((QuerySnapshot querySnapshot) async {
+        if (querySnapshot.docs.isEmpty) {
+          print('No existe el evento');
+
+          // docRef.set(({
+          //   'nombre': nombreEventoCE.text,
+          //   'lugar': nombreLugarCE.text,
+          //   'creador': user?.uid,
+          //   'fecha': fechas_guardarEvento,
+          //   'creador_correo': user?.email,
+          //   'ubicacion': direccionEventoCC.text,
+          //   'descripcion': descripcionEventoCE.text,
+          //   'imagen': await subirImagenes(imageFiles!),
+          //   // 'tickets': constructorTickets(cantidadTicketsDia, cantidadDias)
+          // }));
+
+          print('Evento creado');
+          //enviar notificacion a todos los usuarios que tengan su token almacenado en firebase para que se les notifique que se ha creado un nuevo evento
+
+          print("Notificacion enviada");
+          //_limpiarCafeteria();
+        } else {
+          print('Ya existe el evento');
+        }
+      });
+    } else {
+      print('Se deben ingresar todos los datos');
+      showCustomDialog(context, 'Todos los campos deben estar llenos');
+    }
+  }
+
+  void verDatos() {
+    print(nombreEventoCE.text);
+    print(nombreLugarCE.text);
+    print(fechaEventoCE.text);
+    print(direccionEventoCC.text);
+    print(imageFiles);
+    print(descripcionEventoCE.text);
+    print(capacidadMaximaPersonas.text);
+    print(precioUnidad.text);
+    print(separarEntradas.text);
+    print('FECHA ${fechas_guardarEvento}');
+    // print(imagenEventoCC.text);
   }
 
   InputDecoration buildInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
-      prefixIcon: Icon(icon, color: morado, size: 24),
+      prefixIcon: Icon(icon, color: naranja, size: 24),
       hintText: hintText,
       hintStyle: TextStyle(
         color: morado,
@@ -318,8 +252,6 @@ class _CrearEventoState extends State<CrearEvento> {
 
   Widget textFieldNombreEvento(TextEditingController controller) {
     return (TextField(
-        cursorHeight: 0,
-        cursorWidth: 0,
         onTap: () {
           setState(() {});
         },
@@ -339,8 +271,6 @@ class _CrearEventoState extends State<CrearEvento> {
 
   Widget textFieldNombreCafeteria(TextEditingController controller) {
     return (TextField(
-        cursorHeight: 0,
-        cursorWidth: 0,
         onTap: () {
           setState(() {});
         },
@@ -386,6 +316,20 @@ class _CrearEventoState extends State<CrearEvento> {
     );
   }
 
+  void onControllerChanged(TextEditingController controller) {
+    int cantidadTickets =
+        cantidadDias * int.parse(capacidadMaximaPersonas.text);
+    double ingresoEstimados = cantidadTickets * double.parse(precioUnidad.text);
+    double comisiones = ingresosEstimados * 0.01;
+    double ingresoNeto = ingresosEstimados - comision;
+    print(cantidadTickets);
+    setState(() {
+      ingresosEstimados = ingresoEstimados;
+      comision = comisiones;
+      ingresosNeto = ingresoNeto;
+    });
+  }
+
   String cambiarFormatoFecha(DateTimeRange fecha) {
     String fechaInicio = DateFormat('dd/MM/yyyy').format(fecha.start);
     String fechaFin = DateFormat('dd/MM/yyyy').format(fecha.end);
@@ -420,8 +364,6 @@ class _CrearEventoState extends State<CrearEvento> {
 
   Widget textFieldFechaCafeteria(TextEditingController controller) {
     return (TextField(
-        cursorHeight: 0,
-        cursorWidth: 0,
         readOnly: true,
         onTap: () async {
           DateTimeRange? pickeddate = await showDateRangePicker(
@@ -552,7 +494,7 @@ class _CrearEventoState extends State<CrearEvento> {
             ),
             border: OutlineInputBorder(),
             prefixIcon:
-                Icon(Icons.location_on_outlined, color: morado, size: 24),
+                Icon(Icons.location_on_outlined, color: naranja, size: 24),
             hintText:
                 (esLugar) ? 'Ubicacion del lugar' : 'Ubicacion de la cafeteria',
             hintStyle: TextStyle(
@@ -580,7 +522,7 @@ class _CrearEventoState extends State<CrearEvento> {
         Container(
           margin: EdgeInsets.only(top: (imagenSeleccionada) ? 2 : 15, left: 12),
           child: Row(children: [
-            Icon(Icons.image_outlined, color: morado, size: 24),
+            Icon(Icons.image_outlined, color: naranja, size: 24),
             Container(
               margin: EdgeInsets.only(left: 10),
               child: (imagenSeleccionada)
@@ -678,6 +620,7 @@ class _CrearEventoState extends State<CrearEvento> {
       });
       setState(() {
         direccion_cafeteria = direccion;
+        direccionEventoCC.text = direccion;
       });
     });
   }
@@ -737,6 +680,10 @@ class _CrearEventoState extends State<CrearEvento> {
 //Custom input para la configuracion de entradas al evento
   Widget customTextFormField(TextEditingController controller, String hintText,
       IconData icon, int maxLength) {
+    controller.addListener(() {
+      // Aquí puedes llamar a la función que deseas ejecutar cuando el controlador cambie
+      onControllerChanged(controller);
+    });
     return TextFormField(
       keyboardType: TextInputType.number,
       style: TextStyle(
@@ -756,6 +703,10 @@ class _CrearEventoState extends State<CrearEvento> {
 
   @override
   Widget build(BuildContext context) {
+    var edgeInsets = EdgeInsets.only(
+        top: MediaQuery.of(context).size.height * 0.02,
+        left: MediaQuery.of(context).size.width * 0.05,
+        right: MediaQuery.of(context).size.width * 0.05);
     return SafeArea(
       child: Scaffold(
           backgroundColor: colorScaffold,
@@ -769,7 +720,214 @@ class _CrearEventoState extends State<CrearEvento> {
               },
             ),
           ),
-          body: moduloCrearEvento()),
+          body: SingleChildScrollView(
+            child: (Container(
+                child: Column(
+              children: [
+                Container(
+                    margin: edgeInsets,
+                    child: textFieldNombreEvento(nombreEventoCE)),
+                Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      child: Text(
+                        'Cafeteria',
+                        style: TextStyle(
+                            color: morado,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Switch(
+                      value: esLugar,
+                      onChanged: (value) {
+                        setState(() {
+                          esLugar = value;
+                          if (value) {
+                            direccionEventoCC.text = '';
+                            nombreLugarCE.text = '';
+                          }
+                          nombreLugarCE.text = '';
+                          direccionEventoCC.text = '';
+
+                          //direccionCafeteriaCC.text = '';
+                        });
+                      },
+                      //activeTrackColor: Color.fromARGB(255, 255, 79, 52),
+                      inactiveThumbColor: morado,
+                      activeColor: morado,
+                      inactiveTrackColor: Color.fromARGB(113, 102, 0, 255),
+                    ),
+                    Container(
+                      child: Text(
+                        'Lugar',
+                        style: TextStyle(
+                            color: morado,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                )),
+                Container(
+                    margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.05,
+                        right: MediaQuery.of(context).size.width * 0.05),
+                    child: (!esLugar)
+                        ? autoCompleteNombreCafeteria(nombreLugarCE)
+                        : textFieldNombreCafeteria(nombreLugarCE)),
+                Container(
+                    margin: edgeInsets,
+                    child: textFieldFechaCafeteria(fechaEventoCE)),
+                Container(
+                    margin: edgeInsets,
+                    child: textFieldUbicacionCafeteria(direccionEventoCC)),
+                Container(
+                    margin: edgeInsets,
+                    child: GestureDetector(
+                      child: textFieldImagenCafeteria(),
+                      onTap: () {
+                        _openGallery(context);
+                      },
+                    )),
+                Container(
+                    margin: edgeInsets,
+                    child: //crear textfield que se expanda con el texto
+                        textFieldDescripcionCafeteria(descripcionEventoCE)),
+                Container(
+                    margin: edgeInsets,
+                    child: //crear textfield que se expanda con el texto
+                        Text(
+                      'Configurar entradas al evento',
+                      style: TextStyle(
+                          color: morado,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w900),
+                    )),
+                Container(
+                  margin: edgeInsets,
+                  child: // Capacidad personas
+                      customTextFormField(
+                          capacidadMaximaPersonas,
+                          'Capacidad máxima de personas',
+                          Icons.person_outline,
+                          5),
+                ),
+                Container(
+                  margin: edgeInsets,
+                  child: //Precio unitario tickets
+                      customTextFormField(precioUnidad, 'Precio unidad',
+                          Icons.confirmation_number_outlined, 10),
+                ),
+                Container(
+                  margin: edgeInsets,
+                  child: //Cantidad tickets
+                      customTextFormField(separarEntradas, 'Separar entradas',
+                          Icons.confirmation_number_outlined, 5),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: morado,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: edgeInsets,
+                  child: Column(children: [
+                    Row(
+                      children: [
+                        Text('Ingresos estimados:',
+                            style: TextStyle(color: naranja)),
+                        Expanded(child: Container()),
+                        Text(
+                          '\$ $ingresosEstimados',
+                          style: TextStyle(color: naranja),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('Comision(1%):', style: TextStyle(color: naranja)),
+                        Expanded(child: Container()),
+                        Text(
+                          '\$ $comision',
+                          style: TextStyle(color: naranja),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('Ingresos neto', style: TextStyle(color: naranja)),
+                        Expanded(child: Container()),
+                        Text(
+                          '\$ $ingresosNeto',
+                          style: TextStyle(color: naranja),
+                        )
+                      ],
+                    ),
+                  ]),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    guardarEvento();
+                    // verDatos();
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: morado,
+                          borderRadius: BorderRadius.circular(10)),
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.02,
+                            bottom: MediaQuery.of(context).size.height * 0.02,
+                            left: MediaQuery.of(context).size.width * 0.2,
+                            right: MediaQuery.of(context).size.width * 0.2),
+                        child: Text(
+                          'Generar evento',
+                          style: TextStyle(
+                              color: colorScaffold,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
+                      )),
+                ),
+              ],
+            ))),
+          )),
     );
   }
+}
+
+
+class CustomDialog extends StatelessWidget {
+  final String texto= '';
+  CustomDialog({Key? key, required texto}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Aviso'),
+      content: Text(texto),
+      actions: <Widget>[
+        TextButton(
+          child: Text('Aceptar'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+        ),
+      ],
+    );
+  }
+}
+
+void showCustomDialog(BuildContext context, text) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomDialog(texto: text,);
+    },
+  );
 }

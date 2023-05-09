@@ -131,7 +131,7 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
 return Container(
   margin: EdgeInsets.only(bottom: 25),
   decoration: BoxDecoration(
-    border: Border(bottom: BorderSide(color: colorNaranja, width: 2.0)),
+    border: Border(bottom: BorderSide(color: Colores.colorNaranja, width: 2.0)),
   ),
   child: Wrap(
     crossAxisAlignment: WrapCrossAlignment.center,
@@ -140,28 +140,28 @@ return Container(
         padding: EdgeInsets.only(right: 16),
         child: Row(
           children: [
-            Text('Fecha ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorMorado)),
+            Text('Fecha ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colores.colorMorado)),
             Text(
               formatoFecha(fechaSeleccionada['fecha']),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorMorado),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colores.colorMorado),
             ),
           ],
         ),
       ),
       Row(children: [
-        Text('Cantidad', style: TextStyle(fontSize: 18, color: colorMorado)),
+        Text('Cantidad', style: TextStyle(fontSize: 18, color: Colores.colorMorado)),
         SizedBox(width: 10),
         DropdownButton<String>(
           // value: null,
           dropdownColor: Colors.white,
-          icon: Icon(Icons.arrow_drop_down, color: colorMorado),
-          iconEnabledColor: colorMorado,
+          icon: Icon(Icons.arrow_drop_down, color: Colores.colorMorado),
+          iconEnabledColor: Colores.colorMorado,
           underline: Container(
       height: 1, 
-      color: colorMorado, // Color de la línea
+      color: Colores.colorMorado, // Color de la línea
     ),
           hint: fechaSeleccionada['cantidad'] != null
-            ? Text(fechaSeleccionada['cantidad'].toString(), style: TextStyle(fontSize: 18, color: colorMorado))
+            ? Text(fechaSeleccionada['cantidad'].toString(), style: TextStyle(fontSize: 18, color: Colores.colorMorado))
             : Text('Seleccionar opción'),
           items: items,
           onChanged: (value) {
@@ -181,7 +181,7 @@ return Container(
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorMorado,
+        backgroundColor: Colores.colorMorado,
         title: Text('Comprar entradas'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -191,7 +191,7 @@ return Container(
         ),
       ),
       body: Container(
-        color: colorsScaffold,
+        color: Colores.colorsScaffold,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -235,11 +235,11 @@ return Container(
                             widget.changeIndex(4);
                           }
                         : null,
-                    icon: Icon(Icons.add_shopping_cart, color: colorNaranja,),
-                    label: Text('Agregar al carrito', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? colorNaranja : Colors.grey),),
+                    icon: Icon(Icons.add_shopping_cart, color: Colores.colorNaranja,),
+                    label: Text('Agregar al carrito', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? Colores.colorNaranja : Colors.grey),),
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(colorMorado),
+                          MaterialStateProperty.all<Color>(Colores.colorMorado),
                     ),
                   ),
                   
@@ -269,11 +269,11 @@ class TextoIcono extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icono, color: colorMorado),
+        Icon(icono, color: Colores.colorMorado),
         SizedBox(width: 10),
         Text(
           texto,
-          style: TextStyle(fontSize: tamanoTexto, color: colorMorado),
+          style: TextStyle(fontSize: tamanoTexto, color: Colores.colorMorado),
         ),
       ],
     );
@@ -322,8 +322,8 @@ class _FechasListViewState extends State<FechasListView> {
             });
             widget.onFechaSelected(fecha);
           },
-          selectedColor: colorMorado,
-          backgroundColor: colorNaranja,
+          selectedColor: Colores.colorMorado,
+          backgroundColor: Colores.colorNaranja,
         );
       }),
     );

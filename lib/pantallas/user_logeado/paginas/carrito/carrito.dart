@@ -1,18 +1,13 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/carrito/informacion_usuario_compra.dart';
 import 'package:pay/pay.dart';
+import 'package:get/get.dart';
 import 'payment_configurations.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+
 import '../../../../firebase/autenticacion.dart';
 import '../../variables_globales/varaibles_globales.dart';
-import '../cafeterias/Cafeterias.dart';
 
 import '../perfil/Perfil.dart';
 import 'dart:math' as math;
@@ -36,9 +31,16 @@ class CarritoPageState extends State<CarritoPage> {
 
   final CarritoController carritoController = Get.put(CarritoController());
   // final CarritoController carritoController = Get.find();
-  final _paymentItems = <PaymentItem>[];
+  // final _paymentItems = <PaymentItem>[];
+final _paymentItems = [
+  PaymentItem(
+    label: 'Total',
+    amount: '0.99',
+    status: PaymentItemStatus.final_price,
+  )
+];
 
-  bool mostrarBotonPago = true;
+  
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
   @override
@@ -121,52 +123,38 @@ class CarritoPageState extends State<CarritoPage> {
             Expanded(child: Container()),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GooglePayButton(
-                  paymentConfiguration:
-                      PaymentConfiguration.fromJsonString(defaultGooglePay),
-                  paymentItems: _paymentItems,
-                  childOnError: const Text('Google Pay no es compatible'),
-                  width: double.infinity,
-                  type: GooglePayButtonType.pay,
-                  margin: const EdgeInsets.only(top: 15.0),
-                  onPaymentResult: (result) =>
-                      debugPrint('Payment Result $result'),
-                  loadingIndicator: const Center(
-                    child: CircularProgressIndicator(),
+              children:[
+                
+                  ElevatedButton(
+                    onPressed: () {
+                      // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
+                      if (carritoController.productosEnCarrito.isNotEmpty) {
+                        // setState(() {
+                        //   mostrarBotonPago = false;
+                        // });
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InformacionUsuarioCompra()));
+                      }
+                    },
+                    child: Text('Proceder con la compra'),
                   ),
-                ),
-              ],
-              // children: <Widget>[
-              //   if (mostrarBotonPago)
-              //     ElevatedButton(
-              //       onPressed: () {
-              //         // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
-              //         if (carritoController.productosEnCarrito.isNotEmpty) {
-              //           setState(() {
-              //             mostrarBotonPago = false;
-              //           });
-              //         }
 
-              //       },
-              //       child: Text('Proceder con la compra'),
-              //     ),
-              //   if (!mostrarBotonPago)
-              //     GooglePayButton(
-              //       paymentConfiguration:
-              //           PaymentConfiguration.fromJsonString(defaultGooglePay),
-              //       paymentItems: _paymentItems,
-              //       childOnError: const Text('Google Pay no es compatible'),
-              //       width: double.infinity,
-              //       type: GooglePayButtonType.pay,
-              //       margin: const EdgeInsets.only(top: 15.0),
-              //       onPaymentResult: (result) =>
-              //           debugPrint('Payment Result $result'),
-              //       loadingIndicator: const Center(
-              //         child: CircularProgressIndicator(),
-              //       ),
-              //     ),
-              // ],
+
+                  GooglePayButton(
+                    paymentConfiguration:
+                        PaymentConfiguration.fromJsonString(defaultGooglePay),
+                    paymentItems: _paymentItems,
+                    childOnError: const Text('Google Pay no es compatible'),
+                    width: double.infinity,
+                    type: GooglePayButtonType.pay,
+                    margin: const EdgeInsets.only(top: 15.0),
+                    onPaymentResult: (result) =>
+                        debugPrint('Payment Result $result'),
+                    loadingIndicator: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+               
+              ],
             ),
           ],
         ),

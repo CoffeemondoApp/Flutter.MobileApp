@@ -257,7 +257,7 @@ bool showAppBar = true;
     backgroundColor: colorScaffold,
     appBar: showAppBar ? // Condición para mostrar el AppBarCustom
         PreferredSize(
-          preferredSize: Size.fromHeight(120),
+          preferredSize: Size.fromHeight(100),
           child: AppBarCustom(
             getNivel: getNivel,
             subirNivel: _subirNivel,

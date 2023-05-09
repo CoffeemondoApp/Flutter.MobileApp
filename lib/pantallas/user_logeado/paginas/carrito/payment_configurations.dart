@@ -93,8 +93,7 @@ const String defaultGooglePay = '''{
     },
     "transactionInfo": {
       "countryCode": "US",
-      "currencyCode": "USD",
-    "totalPriceStatus": "FINAL",
+      "currencyCode": "USD"
     }
   }
 }''';

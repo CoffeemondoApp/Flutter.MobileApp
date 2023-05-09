@@ -69,6 +69,7 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   get: ^4.6.5
   pay: ^1.1.1
+
   
 flutter_native_splash:
   color: "#E64921"
