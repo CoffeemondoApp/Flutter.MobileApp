@@ -73,7 +73,7 @@ const String defaultGooglePay = '''{
           "type": "PAYMENT_GATEWAY",
           "parameters": {
             "gateway": "example",
-            "gatewayMerchantId": "gatewayMerchantId"
+            "gatewayMerchantId": "BCR2DN4TZKI7BQQP"
           }
         },
         "parameters": {
@@ -88,8 +88,8 @@ const String defaultGooglePay = '''{
       }
     ],
     "merchantInfo": {
-      "merchantId": "01234567890123456789",
-      "merchantName": "Example Merchant Name"
+      "merchantId": "BCR2DN4TZKI7BQQP",
+      "merchantName": "Coffeemondo SpA"
     },
     "transactionInfo": {
       "countryCode": "US",

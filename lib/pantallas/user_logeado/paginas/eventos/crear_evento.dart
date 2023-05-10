@@ -923,7 +923,7 @@ class CustomDialog extends StatelessWidget {
   }
 }
 
-void showCustomDialog(BuildContext context, text) {
+void showCustomDialog(BuildContext context, String  text) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

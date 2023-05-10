@@ -35,7 +35,7 @@ class CarritoPageState extends State<CarritoPage> {
 final _paymentItems = [
   PaymentItem(
     label: 'Total',
-    amount: '0.99',
+    amount: '0.01',
     status: PaymentItemStatus.final_price,
   )
 ];
@@ -129,9 +129,7 @@ final _paymentItems = [
                     onPressed: () {
                       // Aquí podrías hacer cualquier cosa que necesites antes de ocultar el botón
                       if (carritoController.productosEnCarrito.isNotEmpty) {
-                        // setState(() {
-                        //   mostrarBotonPago = false;
-                        // });
+
                         Navigator.push(context, MaterialPageRoute(builder: (context) => InformacionUsuarioCompra()));
                       }
                     },
@@ -139,20 +137,20 @@ final _paymentItems = [
                   ),
 
 
-                  GooglePayButton(
-                    paymentConfiguration:
-                        PaymentConfiguration.fromJsonString(defaultGooglePay),
-                    paymentItems: _paymentItems,
-                    childOnError: const Text('Google Pay no es compatible'),
-                    width: double.infinity,
-                    type: GooglePayButtonType.pay,
-                    margin: const EdgeInsets.only(top: 15.0),
-                    onPaymentResult: (result) =>
-                        debugPrint('Payment Result $result'),
-                    loadingIndicator: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
+                  // GooglePayButton(
+                  //   paymentConfiguration:
+                  //       PaymentConfiguration.fromJsonString(defaultGooglePay),
+                  //   paymentItems: _paymentItems,
+                  //   childOnError: const Text('Google Pay no es compatible'),
+                  //   width: double.infinity,
+                  //   type: GooglePayButtonType.pay,
+                  //   margin: const EdgeInsets.only(top: 15.0),
+                  //   onPaymentResult: (result) =>
+                  //       debugPrint('Payment Result $result'),
+                  //   loadingIndicator: const Center(
+                  //     child: CircularProgressIndicator(),
+                  //   ),
+                  // ),
                
               ],
             ),
@@ -191,7 +189,8 @@ class ProductoEnCarritoWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(producto['nombre']),
-              Text(formatoFecha(producto['fecha']))
+              Text(formatoFecha(producto['fecha'])),
+              Text('Precio: \$'+producto['precio'].toString()),
             ],
           ),
         ),
