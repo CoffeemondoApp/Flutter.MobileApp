@@ -398,59 +398,84 @@ class EventosState extends State<EventosPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                        height: 100,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.2,
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: snapshot.data!
-                                                  .docs[index]['imagen'].length,
-                                              itemBuilder: (context, index2) {
-                                                return Container(
-                                                  child: Image.network(
-                                                    snapshot.data!.docs[index]
-                                                        ['imagen'][index2],
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                );
-                                              }),
+                                          child: Image.network(
+                                            snapshot.data!.docs[index]
+                                                ['imagen'],
+                                            filterQuality: FilterQuality.high,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                  color: colorMorado,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(colorMorado),
+                                                ),
+                                              );
+                                            },
+                                            fit: BoxFit.fill,
+                                          ),
                                         )),
-                                    ElevatedButton.icon(
-                                      onPressed: () {},
-                                      label: Container(
-                                        child: Text(
-                                          snapshot.data!.docs[index]
-                                              ['ubicacion'],
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: 10, top: 20, bottom: 10),
+                                      child: Text(
+                                          snapshot.data!.docs[index]['nombre'],
                                           style: TextStyle(
-                                              color: colorNaranja,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
+                                              color: colorMorado,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18)),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 10),
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {},
+                                        label: Container(
+                                          child: Text(
+                                            snapshot.data!.docs[index]
+                                                ['ubicacion'],
+                                            style: TextStyle(
+                                                color: colorNaranja,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
-                                      ),
-                                      icon: Icon(
-                                        Icons.location_on,
-                                        color: colorNaranja,
-                                        size: 20,
-                                      ),
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                colorMorado),
-                                        shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
+                                        icon: Icon(
+                                          Icons.location_on,
+                                          color: colorNaranja,
+                                          size: 18,
+                                        ),
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  colorMorado),
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Text(snapshot.data!.docs[index]['nombre'],
-                                        style: TextStyle(
-                                            color: colorMorado,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)),
                                     Text('Precio:',
                                         style: TextStyle(
                                             color: colorMorado,

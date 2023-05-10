@@ -48,7 +48,7 @@ class _InformacionUsuarioCompraState extends State<InformacionUsuarioCompra> {
   }
 
   void regresarCarrito() {
-Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   InputDecoration buildInputDecoration(String hintText, IconData icon) {
@@ -70,72 +70,65 @@ Navigator.pop(context);
     );
   }
 
+Widget textoConfirmacionPago(String text, int size, FontWeight fontWeight, Color color ) {
+  return Text(
+    text,
+    style: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      color: Colors.black54,
+    ),
+    textAlign: TextAlign.center,
+  );
+}
+
+
   @override
-  Future<void> modal() {
-    return showModalBottomSheet<void>(
-      context: context,
-      isDismissible: false,
-      builder: (BuildContext context) {
-        return Container(
-          height: 400,
-          color: colorNaranja,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.check_circle_outline_outlined,
-                    size: 100, color: Colors.black),
-                Text(
-                  '¡Gracias por su compra!',
-                  style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
+Future<void> modal() {
+  return showModalBottomSheet<void>(
+    context: context,
+    isDismissible: false,
+    builder: (BuildContext context) {
+      return Container(
+        height: 400,
+        color: colorNaranja,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.check_circle_outline_outlined, size: 100, color: Colors.black),
+              textoConfirmacionPago('¡Gracias por su compra!', 28, FontWeight.bold, Colors.black),
+              const SizedBox(height: 10),
+              textoConfirmacionPago('El pago ha sido exitoso', 18, FontWeight.w600, Colors.black87),
+              const SizedBox(height: 10),
+              textoConfirmacionPago('En un momento recibirá una notificación con su orden de compra', 18, FontWeight.w500, Colors.black54),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return Colors.red; // Color when the button is pressed
+                      } else {
+                        return Colores.colorMorado; // Default color
+                      }
+                    },
+                  ),
                 ),
-                SizedBox(height: 10,),
-                Center(
-                    child: Text(
-                  'El pago ha sido exitoso',
-                  style: TextStyle(
-                    
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87),textAlign: TextAlign.center,
-                )),
-                SizedBox(height: 10,),
-                Center(
-                    child: Text(
-                  'En un momento recibirá una notificacion con su orden de compra',
-                  style: TextStyle(
-                    
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black54),textAlign: TextAlign.center,
-                )),
-                SizedBox(height: 10,),
-                ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-      (Set<MaterialState> states) {
-        if (states.contains(MaterialState.pressed)) {
-          // Color when the button is pressed
-          return Colors.red;
-        } else {
-          // Default color
-          return Colores.colorMorado;
-        }
-      },
-    ),),
-                  child: const Text('Carrito'),
-                  onPressed: () => {Navigator.pop(context), regresarCarrito()},
-                ),
-              ],
-            ),
+                child: const Text('Carrito'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  regresarCarrito();
+                },
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   Widget buildCustomTextField(
       TextEditingController controller, String labelText, IconData icon) {
@@ -238,7 +231,6 @@ Navigator.pop(context);
                     child: CircularProgressIndicator(),
                   ),
                 ),
-             
             ],
           ),
         ),
