@@ -74,7 +74,7 @@ class CarritoPageState extends State<CarritoPage> {
   bool _visible = false;
 
   final numberFormat = NumberFormat.currency(
-      locale: 'es_MX', symbol: "\$", name: "Pesos", decimalDigits: 0);
+      locale: 'es_CL', symbol: "\$", name: "Pesos", decimalDigits: 0);
 
   bool moduloCarrito = true;
   bool moduloCarrito2 = true;
@@ -273,7 +273,7 @@ class CarritoPageState extends State<CarritoPage> {
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${carritoController.productosEnCarrito.length} Entradas',
+                        '${carritoController.productosEnCarrito.length} productos',
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 14,
@@ -411,6 +411,24 @@ class CarritoPageState extends State<CarritoPage> {
     ));
   }
 
+  Widget textFieldInputNombre() {
+    return (Container(
+      child: TextField(
+        decoration: InputDecoration(
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorNaranja),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorNaranja),
+          ),
+          hintText: 'Nombre',
+          hintStyle: TextStyle(
+              color: colorNaranja, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ));
+  }
+
   Widget containerSelectInfo() {
     return (AnimatedContainer(
         duration: Duration(milliseconds: 800),
@@ -444,25 +462,7 @@ class CarritoPageState extends State<CarritoPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Container(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        border: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: colorNaranja),
-                                        ),
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: colorNaranja),
-                                        ),
-                                        hintText: 'Nombre',
-                                        hintStyle: TextStyle(
-                                            color: colorNaranja,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
+                                  textFieldInputNombre(),
                                   Container(
                                     margin:
                                         EdgeInsets.only(top: 10, bottom: 10),
@@ -659,7 +659,7 @@ class CarritoPageState extends State<CarritoPage> {
               SizedBox(height: 10),
               SingleChildScrollView(
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.27,
                   child: Obx(
                     () => carritoController.productosEnCarrito.isEmpty
                         ? Center(
@@ -722,12 +722,23 @@ class CarritoPageState extends State<CarritoPage> {
                         )
                       ],
                     ),
-                    Text(
-                      'Precio total: ',
-                      style: TextStyle(
-                        color: colorNaranja,
-                        fontSize: 16,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'Precio total: ',
+                          style: TextStyle(
+                            color: colorNaranja,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          numberFormat.format(obtenerMontoTotal()),
+                          style: TextStyle(
+                              color: colorNaranja,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -856,11 +867,19 @@ class CarritoPageState extends State<CarritoPage> {
     });
   }
 
+  var fontSize = 0.0;
+
   @override
   Widget build(BuildContext context) {
     print('El carrito: ${carritoController.productosEnCarrito}');
     print('El  directo a pagar: ${obtenerMontoTotal()}');
-
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    // Calcula el tamaño del texto basado en el ancho de la pantalla
+    setState(() {
+      fontSize = screenWidth * 0.045 * textScaleFactor;
+    });
     //obtener la cantidad total de productos en el carrito sumando todas las key 'cantidad'
     obtenerCantidadTotal();
     print('La cantidad total de productos en el carrito es: ${cantidadTotal}');
@@ -954,13 +973,13 @@ class CarritoPageState extends State<CarritoPage> {
                         : barraCarrito(),
                   ),
                 )),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             moduloCarrito2
                 ? containerTotalCompra()
                 : moduloSelectInfo
                     ? containerSelectInfo()
                     : Container(),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             moduloSelectPago ? containerCheckout() : Container(),
             //Expanded(child: Container()),
             moduloFilaBtns
@@ -996,6 +1015,11 @@ class ProductoEnCarritoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    // Calcula el tamaño del texto basado en el ancho de la pantalla
+    final fontSize = screenWidth * 0.045 * textScaleFactor;
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -1003,7 +1027,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           children: [
             Expanded(
@@ -1024,7 +1048,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(Icons.event_note,
-                                  color: colorNaranja, size: 20),
+                                  color: colorNaranja, size: fontSize),
                               SizedBox(
                                 width: 5,
                               ),
@@ -1032,7 +1056,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                 producto['nombre'],
                                 style: TextStyle(
                                     color: colorNaranja,
-                                    fontSize: 13,
+                                    fontSize: fontSize - 5,
                                     fontWeight: FontWeight.bold),
                               ),
                             ],
@@ -1060,7 +1084,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                     formatoFecha(producto['fecha']),
                                     style: TextStyle(
                                       color: colorNaranja,
-                                      fontSize: 12,
+                                      fontSize: fontSize - 3,
                                     ),
                                   ),
                                 ],

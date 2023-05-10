@@ -117,7 +117,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
     final screenHeight = MediaQuery.of(context).size.height;
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     // Calcula el tamaño del texto basado en el ancho de la pantalla
-    final fontSize = screenWidth * 0.05 * textScaleFactor;
+    final fontSize = screenWidth * 0.045 * textScaleFactor;
     IndexPage indexPage = const IndexPage('');
 
     List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
@@ -256,16 +256,18 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   color: colorMorado,
                 ),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      TextoIcono(
-                        texto: 'Fechas disponibles:',
-                        icono: Icons.calendar_month,
-                        tamanoTexto: fontSize,
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: TextoIcono(
+                          texto: 'Fechas disponibles',
+                          icono: Icons.calendar_month,
+                          tamanoTexto: fontSize,
+                        ),
                       ),
                       FechasListView(
                         fechaLista: fechaLista,
@@ -290,12 +292,9 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   color: colorMorado,
                 ),
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
                       TextoIcono(
                         texto: 'Seleccione la cantidad de entradas',
                         icono: Icons.confirmation_num_rounded,
