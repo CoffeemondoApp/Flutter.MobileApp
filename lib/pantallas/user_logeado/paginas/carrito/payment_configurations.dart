@@ -73,7 +73,7 @@ const String defaultGooglePay = '''{
           "type": "PAYMENT_GATEWAY",
           "parameters": {
             "gateway": "example",
-            "gatewayMerchantId": "gatewayMerchantId"
+            "gatewayMerchantId": "BCR2DN4TZKI7BQQP"
           }
         },
         "parameters": {
@@ -88,14 +88,13 @@ const String defaultGooglePay = '''{
       }
     ],
     "merchantInfo": {
-      "merchantId": "01234567890123456789",
+      "merchantId": "BCR2DN4TZKI7BQQP",
       "merchantName": "Example Merchant Name"
     },
     "transactionInfo": {
       "countryCode": "US",
-      "currencyCode": "USD",
-    "totalPriceStatus": "FINAL",
-    "totalPrice": "5678"
+      "currencyCode": "USD"
+    
     }
   }
 }''';

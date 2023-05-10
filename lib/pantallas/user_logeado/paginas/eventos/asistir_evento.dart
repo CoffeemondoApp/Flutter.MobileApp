@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 
 import '../../variables_globales/varaibles_globales.dart';
 
-
 //Clase para asistir a un evento
 class AsistirEvento extends StatefulWidget {
   final String idEvento;
@@ -29,16 +28,15 @@ class _AsistirEventoState extends State<AsistirEvento> {
   List<DateTime> fechaLista = [];
 
   //Informacion completa del carrito
-  Map<String, dynamic> infoCarrito = { };
+  Map<String, dynamic> infoCarrito = {};
 
   //Fechas seleccionadas y su cantidad de entradas
   final List<Map<String, dynamic>> _fechasSeleccionadas = [];
 
-
   late DocumentReference
       _docRef; // Declarar la variable y asignarla en initState
 
- int entradasDisponibles = 0;
+  int entradasDisponibles = 0;
   @override
   void initState() {
     super.initState();
@@ -96,17 +94,22 @@ class _AsistirEventoState extends State<AsistirEvento> {
   }
 
 //Agregar fecha seleccionada y darle un ticket
-void _handleFechaSelected(DateTime fecha) {
- setState(() {
-    int index = _fechasSeleccionadas.indexWhere((element) =>  element['fecha'] == fecha);
-    if (index >= 0) {
-      _fechasSeleccionadas.removeAt(index);
-    } else {
-      _fechasSeleccionadas.add({'nombre':infoEvento['nombre'],'fecha': fecha, 'cantidad': 1, 'precio': 1000});
-    }
-  });
-}
-
+  void _handleFechaSelected(DateTime fecha) {
+    setState(() {
+      int index = _fechasSeleccionadas
+          .indexWhere((element) => element['fecha'] == fecha);
+      if (index >= 0) {
+        _fechasSeleccionadas.removeAt(index);
+      } else {
+        _fechasSeleccionadas.add({
+          'nombre': infoEvento['nombre'],
+          'fecha': fecha,
+          'cantidad': 1,
+          'precio': 300
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,46 +120,81 @@ void _handleFechaSelected(DateTime fecha) {
     final fontSize = screenWidth * 0.05 * textScaleFactor;
     IndexPage indexPage = const IndexPage('');
 
-List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
-  List<String> opciones = ['1', '2', '3', '4','5','6','7','8'];
-  List<DropdownMenuItem<String>> items = [];
+    List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
+      List<String> opciones = ['1', '2', '3', '4', '5', '6', '7', '8'];
+      List<DropdownMenuItem<String>> items = [];
 
-  for (String opcion in opciones) {
-    items.add(DropdownMenuItem(
-      value: opcion,
-      child: Text(opcion),
-    ));
-  }
+      for (String opcion in opciones) {
+        items.add(DropdownMenuItem(
+          value: opcion,
+          child: Text(opcion),
+        ));
+      }
 
-  return Wrap(
-  crossAxisAlignment: WrapCrossAlignment.center,
-  children: [
-    Padding(
-      padding: EdgeInsets.only(right: 16),
-      child: Text(
-        formatoFecha(fechaSeleccionada['fecha']),
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-    ),
-    DropdownButton<String>(
-      // value: null,
-    
-      hint: fechaSeleccionada['cantidad'] != null
-          ? Text(fechaSeleccionada['cantidad'].toString())
-          : Text('Seleccionar opción'),
-    
-      items: items,
-      onChanged: (value) {
-          setState(() {
-            fechaSeleccionada['cantidad'] = int.parse(value!);
-          });
-      },
-    ),
-    // Text('Entradas disponibles:')
-  ],
-);
-}).toList();
-
+      return Container(
+        margin: EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(20),
+          color: colorNaranja,
+        ),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Container(
+                child: Text(
+                  formatoFecha(fechaSeleccionada['fecha']),
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: colorMorado,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (fechaSeleccionada['cantidad'] > 1) {
+                            fechaSeleccionada['cantidad']--;
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        Icons.remove,
+                        color: colorMorado,
+                      )),
+                  Container(
+                    child: Text(
+                      fechaSeleccionada['cantidad'].toString(),
+                      style: TextStyle(fontSize: 16, color: colorMorado),
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          fechaSeleccionada['cantidad']++;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.add,
+                        color: colorMorado,
+                      )),
+                ],
+              )
+              // Text('Entradas disponibles:')
+            ],
+          ),
+        ),
+      );
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -176,51 +214,133 @@ List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Text(infoEvento['nombre']),),
-              TextoIcono(
-                texto: 'Fechas disponibles:',
-                icono: Icons.calendar_month,
-                tamanoTexto: fontSize,
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(20),
+                      color: colorMorado,
+                    ),
+                    child: Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Text(
+                        infoEvento['nombre'],
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorNaranja),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              FechasListView(
-                fechaLista: fechaLista,
-                onFechaSelected: _handleFechaSelected,
-                formatoFecha: formatoFecha,
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(20),
+                  color: colorMorado,
+                ),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextoIcono(
+                        texto: 'Fechas disponibles:',
+                        icono: Icons.calendar_month,
+                        tamanoTexto: fontSize,
+                      ),
+                      FechasListView(
+                        fechaLista: fechaLista,
+                        onFechaSelected: _handleFechaSelected,
+                        formatoFecha: formatoFecha,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              TextoIcono(
-                texto: 'Seleccione la cantidad de entradas',
-                icono: Icons.confirmation_num_rounded,
-                tamanoTexto: fontSize,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Column(
-                children: fechasText,
+              SizedBox(height: 30),
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(20),
+                  color: colorMorado,
+                ),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextoIcono(
+                        texto: 'Seleccione la cantidad de entradas',
+                        icono: Icons.confirmation_num_rounded,
+                        tamanoTexto: fontSize,
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Column(
+                        children: fechasText,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Expanded(child: Container()),
               Row(
-                
                 children: [
                   ElevatedButton.icon(
                     onPressed: _fechasSeleccionadas.isNotEmpty
                         ? () {
-                          
-                          carritoController.agregarAlCarrito(_fechasSeleccionadas);
+                            carritoController
+                                .agregarAlCarrito(_fechasSeleccionadas);
 
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                             widget.changeIndex(4);
                           }
                         : null,
-                    icon: Icon(Icons.add_shopping_cart, color: colorNaranja,),
-                    label: Text('Agregar al carrito', style: TextStyle(color: _fechasSeleccionadas.isNotEmpty ? colorNaranja : Colors.grey),),
+                    icon: Icon(
+                      Icons.add_shopping_cart,
+                      color: colorNaranja,
+                    ),
+                    label: Text(
+                      'Agregar al carrito',
+                      style: TextStyle(
+                          color: _fechasSeleccionadas.isNotEmpty
+                              ? colorNaranja
+                              : Colors.grey),
+                    ),
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all<Color>(colorMorado),
                     ),
                   ),
-                  
                 ],
               )
             ],
@@ -247,11 +367,11 @@ class TextoIcono extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icono, color: colorMorado),
+        Icon(icono, color: colorNaranja),
         SizedBox(width: 10),
         Text(
           texto,
-          style: TextStyle(fontSize: tamanoTexto, color: colorMorado),
+          style: TextStyle(fontSize: tamanoTexto, color: colorNaranja),
         ),
       ],
     );
