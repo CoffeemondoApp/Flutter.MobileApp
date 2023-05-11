@@ -1091,7 +1091,7 @@ class EventosState extends State<EventosPage> {
         style: TextStyle(
             color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
             fontWeight: FontWeight.bold,
-            fontSize: 20),
+            fontSize: 18),
       ),
     ));
   }
@@ -1179,6 +1179,31 @@ class EventosState extends State<EventosPage> {
     );
   }
 
+  Widget expandibleCrearEvento() {
+    return (GestureDetector(
+      onTap: () {
+        setState(() {
+          if (!abrirCrearCafeteria) {
+            abrirCrearCafeteria = !abrirCrearCafeteria;
+          }
+        });
+      },
+      child: AnimatedContainer(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: (abrirCrearCafeteria)
+              ? MediaQuery.of(context).size.height * 0.9
+              : MediaQuery.of(context).size.height * 0.07,
+          decoration: BoxDecoration(
+            color: (abrirCrearCafeteria)
+                ? Colors.transparent
+                : Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          duration: Duration(seconds: 1),
+          child: moduloCrearEvento()),
+    ));
+  }
+
   Widget _bodyEventos() {
     User? user = Auth().currentUser;
     print(user!.uid);
@@ -1194,39 +1219,14 @@ class EventosState extends State<EventosPage> {
     return SingleChildScrollView(
       child: (Column(children: [
         _containerMensajeError(),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              if (!abrirCrearCafeteria) {
-                abrirCrearCafeteria = !abrirCrearCafeteria;
-              }
-            });
-          },
-          child: AnimatedContainer(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: (abrirCrearCafeteria)
-                  ? MediaQuery.of(context).size.height * 0.9
-                  : MediaQuery.of(context).size.height * 0.07,
-              decoration: BoxDecoration(
-                color: (abrirCrearCafeteria)
-                    ? Colors.transparent
-                    : Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              duration: Duration(seconds: 1),
-              child: moduloCrearEvento()),
-        ),
-
-        //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
-        //Container para mostrar las cafeterias
-
+        //expandibleCrearEvento(),
         Container(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
+          child: Container(
+            //color: Colors.black,
             child: Column(children: [
               tituloEventos(),
               Container(
-                height: MediaQuery.of(context).size.height * 0.55,
+                height: MediaQuery.of(context).size.height * 0.6,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
@@ -1244,174 +1244,184 @@ class EventosState extends State<EventosPage> {
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.only(right: 10.0),
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: colorNaranja,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.2,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.network(
+                              return Center(
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  decoration: BoxDecoration(
+                                    color: colorNaranja,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: Image.network(
+                                              snapshot.data!.docs[index]
+                                                  ['imagen'],
+                                              filterQuality: FilterQuality.high,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.9,
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                    color: colorMorado,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(colorMorado),
+                                                  ),
+                                                );
+                                              },
+                                              fit: BoxFit.fill,
+                                            ),
+                                          )),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 10, top: 20, bottom: 10),
+                                        child: Text(
                                             snapshot.data!.docs[index]
-                                                ['imagen'],
-                                            filterQuality: FilterQuality.high,
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                      : null,
-                                                  color: colorMorado,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(colorMorado),
-                                                ),
-                                              );
-                                            },
-                                            fit: BoxFit.fill,
-                                          ),
-                                        )),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          left: 10, top: 20, bottom: 10),
-                                      child: Text(
-                                          snapshot.data!.docs[index]['nombre'],
-                                          style: TextStyle(
-                                              color: colorMorado,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18)),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 10),
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {},
-                                        label: Container(
-                                          child: Text(
-                                            snapshot.data!.docs[index]
-                                                ['ubicacion'],
+                                                ['nombre'],
                                             style: TextStyle(
-                                                color: colorNaranja,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
+                                                color: colorMorado,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18)),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(left: 10),
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {},
+                                          label: Container(
+                                            child: Text(
+                                              snapshot.data!.docs[index]
+                                                  ['ubicacion'],
+                                              style: TextStyle(
+                                                  color: colorNaranja,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
-                                        ),
-                                        icon: Icon(
-                                          Icons.location_on,
-                                          color: colorNaranja,
-                                          size: 18,
-                                        ),
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  colorMorado),
-                                          shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0),
+                                          icon: Icon(
+                                            Icons.location_on,
+                                            color: colorNaranja,
+                                            size: 18,
+                                          ),
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(colorMorado),
+                                            shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Text('Precio:',
-                                        style: TextStyle(
-                                            color: colorMorado,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14)),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: colorMorado,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                snapshot.data!.docs[index]
-                                                    ['descripcion'],
-                                                style: TextStyle(
-                                                  color: colorNaranja,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
+                                      Text('Precio:',
+                                          style: TextStyle(
+                                              color: colorMorado,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14)),
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: colorMorado,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  snapshot.data!.docs[index]
+                                                      ['descripcion'],
+                                                  style: TextStyle(
+                                                    color: colorNaranja,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                             ),
+                                          ]),
+                                      Expanded(child: Container()),
+                                      moduloFecha(
+                                          snapshot.data!.docs[index]['fecha']),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          botonesCirculares(
+                                              Icons.info_outline, () {}),
+                                          SizedBox(
+                                            width: 10,
                                           ),
-                                        ]),
-                                    Expanded(child: Container()),
-                                    moduloFecha(
-                                        snapshot.data!.docs[index]['fecha']),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        botonesCirculares(
-                                            Icons.info_outline, () {}),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        botonesCirculares(
-                                            Icons.attach_money_rounded, () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AsistirEvento(
-                                                          idEvento: snapshot
-                                                              .data!
-                                                              .docs[index]
-                                                              .id,
-                                                          changeIndex: widget
-                                                              .changeIndex)));
-                                        }),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        botonesCirculares(
-                                            Icons.map_outlined, () {}),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        botonesCirculares(
-                                            Icons.favorite_border_outlined,
-                                            () {})
-                                      ],
-                                    )
-                                  ],
+                                          botonesCirculares(
+                                              Icons.attach_money_rounded, () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AsistirEvento(
+                                                            idEvento: snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                .id,
+                                                            changeIndex: widget
+                                                                .changeIndex)));
+                                          }),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          botonesCirculares(
+                                              Icons.map_outlined, () {}),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          botonesCirculares(
+                                              Icons.favorite_border_outlined,
+                                              () {})
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             });
@@ -1608,6 +1618,6 @@ class EventosState extends State<EventosPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return _bodyEventos();
+    return SingleChildScrollView(child: _bodyEventos());
   }
 }

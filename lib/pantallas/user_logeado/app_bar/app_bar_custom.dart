@@ -24,8 +24,6 @@ class AppBarCustom extends StatefulWidget {
 class _AppBarCustomState extends State<AppBarCustom> {
   @override
   Widget build(BuildContext context) {
-  
-
     Widget AppBarcus() {
       return Container(
         //darle un ancho y alto al container respecto al tamaño de la pantalla
@@ -38,37 +36,36 @@ class _AppBarCustomState extends State<AppBarCustom> {
               height: 160,
               color: Color.fromARGB(255, 84, 14, 148),
             ),
-  
           ],
         ),
       );
     }
 
     Widget FotoPerfil() {
-  return Transform.translate(
-    offset: Offset(0, 20),
-    child: ElevatedButton(
-      onPressed: () {},
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(160),
-        child: Obx(
-          () => widget.globalController.urlImage.value != ''
-              ? Image.network(
-                  widget.globalController.urlImage.value,
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.cover,
-                )
-              : Image.asset(
-                  'assets/user_img.png',
-                  width: 120,
-                ),
+      return Transform.translate(
+        offset: Offset(0, 20),
+        child: ElevatedButton(
+          onPressed: () {},
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(160),
+            child: Obx(
+              () => widget.globalController.urlImage.value != ''
+                  ? Image.network(
+                      widget.globalController.urlImage.value,
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      'assets/user_img.png',
+                      width: MediaQuery.of(context).size.width * 0.2,
+                    ),
+            ),
+          ),
+          style: ElevatedButton.styleFrom(shape: CircleBorder()),
         ),
-      ),
-      style: ElevatedButton.styleFrom(shape: CircleBorder()),
-    ),
-  );
-}
+      );
+    }
 
     @override
     Widget _textoAppBar() {
@@ -107,27 +104,29 @@ class _AppBarCustomState extends State<AppBarCustom> {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                child: Obx(() => Text(
-                  'Nivel ${widget.globalController.nivel.value}',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                child: Obx(
+                  () => Text(
+                    'Nivel ${widget.globalController.nivel.value}',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),),
+              ),
               Container(
-                child: Obx(() => Text(
+                  child: Obx(
+                () => Text(
                   '${widget.globalController.puntaje_actual.value}/${widget.globalController.puntaje_nivel.value}',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold),
-                ),)
-              ),
+                ),
+              )),
             ],
           )));
     }
-
 
     @override
     Widget _barraProgressBar() {
@@ -172,17 +171,16 @@ class _AppBarCustomState extends State<AppBarCustom> {
     @override
     Widget _ProgressBar() {
       return (Obx(() => Column(
-        children: [
-          _textoProgressBar(),
-          _barraProgressBar(),
-        ],
-      )));
+            children: [
+              _textoProgressBar(),
+              _barraProgressBar(),
+            ],
+          )));
     }
 
     return Container(
       color: Color.fromARGB(255, 84, 14, 148),
       child: Stack(
-        
         children: [
           // AppBarcus(),
           Row(
@@ -193,10 +191,9 @@ class _AppBarCustomState extends State<AppBarCustom> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                     _textoAppBar(),
-                     Expanded(child: Container()),
-                      _ProgressBar() 
-                      
+                      _textoAppBar(),
+                      Expanded(child: Container()),
+                      _ProgressBar()
                     ],
                   ),
                 ),
