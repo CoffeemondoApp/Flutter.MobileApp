@@ -1,6 +1,10 @@
-  // //Colores
-  import 'dart:ui';
+// //Colores
+import 'dart:ui';
 
-var colorsScaffold = Color(0xffffebdcac);
-  var colorNaranja = Color.fromARGB(255, 255, 79, 52);
-  var colorMorado = Color.fromARGB(0xff, 0x52, 0x01, 0x9b);
+class Colores {
+
+static const Color colorsScaffold = Color(0xffffebdcac);
+static const Color colorNaranja = Color(0xFFFF4F34);
+static const Color colorMorado = Color(0xFF52019B);
+}
+

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Calendario.dart';
 import 'package:coffeemondo/pantallas/user_logeado/colores/colores.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +104,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
           'nombre': infoEvento['nombre'],
           'fecha': fecha,
           'cantidad': 1,
-          'precio': 300
+          'precio': 1000
         });
       }
     });
@@ -121,16 +120,6 @@ class _AsistirEventoState extends State<AsistirEvento> {
     IndexPage indexPage = const IndexPage('');
 
     List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
-      List<String> opciones = ['1', '2', '3', '4', '5', '6', '7', '8'];
-      List<DropdownMenuItem<String>> items = [];
-
-      for (String opcion in opciones) {
-        items.add(DropdownMenuItem(
-          value: opcion,
-          child: Text(opcion),
-        ));
-      }
-
       return Container(
         width: MediaQuery.of(context).size.width * 0.95,
         margin: EdgeInsets.only(bottom: 10),
@@ -143,7 +132,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
             ),
           ],
           borderRadius: BorderRadius.circular(20),
-          color: colorNaranja,
+          color: Colores.colorNaranja,
         ),
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 10),
@@ -155,7 +144,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   formatoFecha(fechaSeleccionada['fecha']),
                   style: TextStyle(
                       fontSize: fontSize - 2,
-                      color: colorMorado,
+                      color: Colores.colorMorado,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -171,14 +160,14 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       },
                       icon: Icon(
                         Icons.remove,
-                        color: colorMorado,
+                        color: Colores.colorMorado,
                       )),
                   Container(
                     child: Text(
                       fechaSeleccionada['cantidad'].toString(),
                       style: TextStyle(
                           fontSize: fontSize - 1,
-                          color: colorMorado,
+                          color: Colores.colorMorado,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -190,7 +179,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       },
                       icon: Icon(
                         Icons.add,
-                        color: colorMorado,
+                        color: Colores.colorMorado,
                       )),
                 ],
               )
@@ -203,7 +192,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorMorado,
+        backgroundColor: Colores.colorMorado,
         title: Text('Comprar entradas'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -213,7 +202,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
         ),
       ),
       body: Container(
-        color: colorsScaffold,
+        color: Colores.colorsScaffold,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -232,7 +221,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         ),
                       ],
                       borderRadius: BorderRadius.circular(20),
-                      color: colorMorado,
+                      color: Colores.colorMorado,
                     ),
                     child: Container(
                       margin:
@@ -242,12 +231,13 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: colorNaranja),
+                            color: Colores.colorNaranja),
                       ),
                     ),
                   ),
                 ),
               ),
+              
               Container(
                 decoration: BoxDecoration(
                   boxShadow: <BoxShadow>[
@@ -258,7 +248,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                     ),
                   ],
                   borderRadius: BorderRadius.circular(20),
-                  color: colorMorado,
+                  color: Colores.colorMorado,
                 ),
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -294,7 +284,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                     ),
                   ],
                   borderRadius: BorderRadius.circular(20),
-                  color: colorMorado,
+                  color: Colores.colorMorado,
                 ),
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -328,7 +318,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         ? () {
                             carritoController
                                 .agregarAlCarrito(_fechasSeleccionadas);
-
+          
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                             widget.changeIndex(4);
@@ -336,18 +326,18 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         : null,
                     icon: Icon(
                       Icons.add_shopping_cart,
-                      color: colorNaranja,
+                      color: Colores.colorNaranja,
                     ),
                     label: Text(
                       'Agregar al carrito',
                       style: TextStyle(
                           color: _fechasSeleccionadas.isNotEmpty
-                              ? colorNaranja
+                              ? Colores.colorNaranja
                               : Colors.grey),
                     ),
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(colorMorado),
+                          MaterialStateProperty.all<Color>(Colores.colorMorado),
                     ),
                   ),
                 ],
@@ -376,11 +366,11 @@ class TextoIcono extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icono, color: colorNaranja),
+        Icon(icono, color: Colores.colorNaranja),
         SizedBox(width: 10),
         Text(
           texto,
-          style: TextStyle(fontSize: tamanoTexto, color: colorNaranja),
+          style: TextStyle(fontSize: tamanoTexto, color: Colores.colorNaranja),
         ),
       ],
     );
@@ -416,7 +406,7 @@ class _FechasListViewState extends State<FechasListView> {
             widget.formatoFecha(fecha),
             style: TextStyle(
               color: _selectedChipIndices.contains(index)
-                  ? colorNaranja
+                  ? Colores.colorNaranja
                   : Colors.white, // color del texto
             ),
           ),
@@ -432,8 +422,8 @@ class _FechasListViewState extends State<FechasListView> {
             widget.onFechaSelected(fecha);
             print(_selectedChipIndices);
           },
-          selectedColor: colorMorado,
-          backgroundColor: colorNaranja,
+          selectedColor: Colores.colorMorado,
+          backgroundColor: Colores.colorNaranja,
         );
       }),
     );

@@ -103,40 +103,85 @@ class GlobalController extends GetxController {
   }
 }
 
+class Product {
+  final String nombre;
+  final DateTime fecha;
+  final double precio;
+  final RxInt cantidad;
+
+  Product({
+    required this.nombre,
+    required this.precio,
+    required this.cantidad,
+    required this.fecha,
+  });
+}
+
 class CarritoController extends GetxController {
-  var productosEnCarrito = [].obs;
+  RxList<Product> productosEnCarrito = <Product>[].obs;
 
   void agregarAlCarrito(productos) {
     for (var producto in productos) {
+      Product nuevoProducto = Product(
+        nombre: producto['nombre'],
+        precio: producto['precio'],
+        cantidad: RxInt(producto['cantidad']),
+        fecha: producto['fecha'],
+      );
+
+      print('El producto en controller$nuevoProducto');
       bool encontrado = false;
       for (var item in productosEnCarrito) {
-        if (item['nombre'] == producto['nombre'] &&
-            item['fecha'] == producto['fecha']) {
+        if (item.nombre == nuevoProducto.nombre &&
+            item.fecha == nuevoProducto.fecha) {
           // Si el producto ya existe en el carrito, aumentar la cantidad
-          item['cantidad'] += producto['cantidad'];
+          aumentarNCantidad(nuevoProducto.cantidad.value, item);
+
           encontrado = true;
           break;
         }
       }
       if (!encontrado) {
         // Si el producto no existe en el carrito, agregarlo
-        productosEnCarrito.add(producto);
+        productosEnCarrito.add(nuevoProducto);
       }
     }
   }
 
-  void removerDelCarrito(int index) {
-    productosEnCarrito.removeAt(index);
+  void removerDelCarrito(Product producto) {
+    productosEnCarrito.remove(producto);
   }
 
-  void aumentarCantidad(int index) {
-    productosEnCarrito[index]['cantidad']++;
+  void aumentarNCantidad(int cantidad, Product producto) {
+    producto.cantidad.value += cantidad;
   }
 
-  void disminuirCantidad(int index) {
-    productosEnCarrito[index]['cantidad']--;
-    if (productosEnCarrito[index]['cantidad'] <= 0) {
-      removerDelCarrito(index);
+  void aumentarCantidad(producto) {
+    producto.cantidad.value++;
+  }
+
+  void disminuirCantidad(Product producto) {
+    if (producto.cantidad.value <= 1) {
+      producto.cantidad.value = 1;
+    } else {
+      producto.cantidad.value--;
     }
+  }
+
+
+  double obtenerPrecioTotal() {
+    double precioTotal = 0.0;
+    for (var producto in productosEnCarrito) {
+      precioTotal += producto.precio * producto.cantidad.value;
+    }
+    return precioTotal;
+  }
+
+  int obtenerCantidadTotal() {
+    int cantidadTotal = 0;
+    for (var producto in productosEnCarrito) {
+      cantidadTotal += producto.cantidad.value;
+    }
+    return cantidadTotal;
   }
 }
