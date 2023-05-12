@@ -105,7 +105,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
           'nombre': infoEvento['nombre'],
           'fecha': fecha,
           'cantidad': 1,
-          'precio': 300
+          'precio': 0.1
         });
       }
     });
@@ -117,20 +117,10 @@ class _AsistirEventoState extends State<AsistirEvento> {
     final screenHeight = MediaQuery.of(context).size.height;
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     // Calcula el tamaño del texto basado en el ancho de la pantalla
-    final fontSize = screenWidth * 0.049 * textScaleFactor;
+    final fontSize = screenWidth * 0.045 * textScaleFactor;
     IndexPage indexPage = const IndexPage('');
 
     List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
-      List<String> opciones = ['1', '2', '3', '4', '5', '6', '7', '8'];
-      List<DropdownMenuItem<String>> items = [];
-
-      for (String opcion in opciones) {
-        items.add(DropdownMenuItem(
-          value: opcion,
-          child: Text(opcion),
-        ));
-      }
-
       return Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -174,7 +164,8 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   Container(
                     child: Text(
                       fechaSeleccionada['cantidad'].toString(),
-                      style: TextStyle(fontSize: 16, color: Colores.colorMorado),
+                      style:
+                          TextStyle(fontSize: 16, color: Colores.colorMorado),
                     ),
                   ),
                   IconButton(
@@ -243,6 +234,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   ),
                 ),
               ),
+              
               Container(
                 decoration: BoxDecoration(
                   boxShadow: <BoxShadow>[
@@ -256,16 +248,18 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   color: Colores.colorMorado,
                 ),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      TextoIcono(
-                        texto: 'Fechas disponibles:',
-                        icono: Icons.calendar_month,
-                        tamanoTexto: fontSize,
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: TextoIcono(
+                          texto: 'Fechas disponibles',
+                          icono: Icons.calendar_month,
+                          tamanoTexto: fontSize,
+                        ),
                       ),
                       FechasListView(
                         fechaLista: fechaLista,
@@ -290,12 +284,10 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   color: Colores.colorMorado,
                 ),
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+          
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
                       TextoIcono(
                         texto: 'Seleccione la cantidad de entradas',
                         icono: Icons.confirmation_num_rounded,
@@ -319,7 +311,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         ? () {
                             carritoController
                                 .agregarAlCarrito(_fechasSeleccionadas);
-
+          
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                             widget.changeIndex(4);

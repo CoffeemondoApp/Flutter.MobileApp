@@ -32,7 +32,7 @@ class CarritoPageState extends State<CarritoPage> {
 
   final CarritoController carritoController = Get.put(CarritoController());
   // final CarritoController carritoController = Get.find();
-  final _paymentItems = <PaymentItem>[];
+  List<PaymentItem> _paymentItems = <PaymentItem>[];
 
   bool mostrarBotonPago = true;
 
@@ -42,35 +42,32 @@ class CarritoPageState extends State<CarritoPage> {
   @override
   void initState() {
     super.initState();
-
-    for (var producto in carritoController.productosEnCarrito) {
-      var precioTotal = producto['precio'] * producto['cantidad'];
-
-      if (!_paymentItems.any((item) => item.label == producto['nombre'])) {
-        _paymentItems.add(
-          PaymentItem(
-            label: producto['nombre'],
-            amount: precioTotal.toString(),
-            status: PaymentItemStatus.final_price,
-          ),
-        );
-      }
-    }
+    convertirProductosAPaymentItems();
   }
 
-  int obtenerMontoTotal() {
-    int montoTotal = 0;
+  void convertirProductosAPaymentItems() {
+    _paymentItems.clear(); // Limpiar la lista de items de pago
+    final List<PaymentItem> prueba = [];
     for (var producto in carritoController.productosEnCarrito) {
-      int precioTotal = producto['precio'] * producto['cantidad'];
-      montoTotal += precioTotal;
+      final label = producto.nombre;
+      final amount = (producto.precio * producto.cantidad.value).toString();
+
+      final paymentItem = PaymentItem(
+        label: label,
+        amount: amount,
+        status: PaymentItemStatus.final_price,
+      );
+      prueba.add(paymentItem);
     }
-    return montoTotal;
+    setState(() {
+      _paymentItems = prueba;
+    });
   }
 
   bool _visible = false;
 
   final numberFormat = NumberFormat.currency(
-      locale: 'es_MX', symbol: "\$", name: "Pesos", decimalDigits: 0);
+      locale: 'es_CL', symbol: "\$", name: "Pesos", decimalDigits: 0);
 
   bool moduloCarrito = true;
   bool moduloCarrito2 = true;
@@ -85,6 +82,20 @@ class CarritoPageState extends State<CarritoPage> {
   bool infoGuardada2 = false;
 
   bool moduloFilaBtns = true;
+
+  void generarElpago(result) {
+    {
+      // debugPrint('Payment Result $result');
+      debugPrint('Payment Result ${result['tokenizationData']}');
+      if (result) {
+        String token = result['tokenizationData']['token'];
+        //crear orden de pago y en estado pendiente; 
+
+        debugPrint('Este el token: $token');
+      }
+      // modal();
+    }
+  }
 
   void generarCarrito() {
     if (!moduloCarrito) {
@@ -249,7 +260,6 @@ class CarritoPageState extends State<CarritoPage> {
           color: colorNaranja,
           height: 310,
           child: Column(
-           
             children: [
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -260,7 +270,8 @@ class CarritoPageState extends State<CarritoPage> {
                     Column(
                       children: [
                         const Icon(Icons.check_circle_outline_outlined,
-                            size: 100, color: colorNaranja),textoConfirmacionPago('¡Gracias por su compra!', 28,
+                            size: 100, color: colorNaranja),
+                        textoConfirmacionPago('¡Gracias por su compra!', 28,
                             FontWeight.bold, colorNaranja),
                       ],
                     ),
@@ -269,11 +280,9 @@ class CarritoPageState extends State<CarritoPage> {
               ),
               Container(
                 padding: EdgeInsets.only(top: 10),
-
                 color: colorNaranja,
                 child: Column(
                   children: [
-                    
                     const SizedBox(height: 10),
                     textoConfirmacionPago('El pago ha sido exitoso', 18,
                         FontWeight.w600, Colors.black87),
@@ -314,20 +323,17 @@ class CarritoPageState extends State<CarritoPage> {
     return (Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        ElevatedButton(
-            onPressed: () {
-              modal();
-            },
-            child: Text('modal')),
-        btnComprarAhora(),
+        // btnComprarAhora(),
         GooglePayButton(
-          width: MediaQuery.of(context).size.width * 0.45,
+          width: 200,
+          // width: MediaQuery.of(context).size.width * 0.45,
           paymentConfiguration:
               PaymentConfiguration.fromJsonString(defaultGooglePay),
           paymentItems: _paymentItems,
           type: GooglePayButtonType.checkout,
           margin: const EdgeInsets.only(top: 15.0),
-          onPaymentResult: (result) => debugPrint('Payment Result $result'),
+
+          onPaymentResult: generarElpago,
           loadingIndicator: const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
@@ -359,7 +365,7 @@ class CarritoPageState extends State<CarritoPage> {
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${carritoController.productosEnCarrito.length} Entradas',
+                        '${carritoController.productosEnCarrito.length} productos',
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 14,
@@ -403,13 +409,13 @@ class CarritoPageState extends State<CarritoPage> {
                     Icon(Icons.money_outlined, color: colorMorado, size: 20),
                     Container(
                       margin: EdgeInsets.only(left: 5),
-                      child: Text(
-                        '${numberFormat.format(obtenerMontoTotal())}',
-                        style: TextStyle(
-                            color: colorMorado,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: Obx(() => Text(
+                            '${carritoController.obtenerPrecioTotal()}',
+                            style: TextStyle(
+                                color: colorMorado,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                          )),
                     )
                   ],
                 )),
@@ -440,13 +446,13 @@ class CarritoPageState extends State<CarritoPage> {
           child: Center(
             child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  'Total de la compra: ${numberFormat.format(obtenerMontoTotal())}',
-                  style: TextStyle(
-                      color: colorNaranja,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                )),
+                child: Obx(() => Text(
+                      'Total de la compra: ${carritoController.obtenerPrecioTotal()}',
+                      style: TextStyle(
+                          color: colorNaranja,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ))),
           ),
         ),
       ],
@@ -497,6 +503,24 @@ class CarritoPageState extends State<CarritoPage> {
     ));
   }
 
+  Widget textFieldInputNombre() {
+    return (Container(
+      child: TextField(
+        decoration: InputDecoration(
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorNaranja),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: colorNaranja),
+          ),
+          hintText: 'Nombre',
+          hintStyle: TextStyle(
+              color: colorNaranja, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ));
+  }
+
   Widget containerSelectInfo() {
     return (AnimatedContainer(
         duration: Duration(milliseconds: 800),
@@ -530,25 +554,7 @@ class CarritoPageState extends State<CarritoPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Container(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        border: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: colorNaranja),
-                                        ),
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: colorNaranja),
-                                        ),
-                                        hintText: 'Nombre',
-                                        hintStyle: TextStyle(
-                                            color: colorNaranja,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
+                                  textFieldInputNombre(),
                                   Container(
                                     margin:
                                         EdgeInsets.only(top: 10, bottom: 10),
@@ -745,7 +751,7 @@ class CarritoPageState extends State<CarritoPage> {
               SizedBox(height: 10),
               SingleChildScrollView(
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.27,
                   child: Obx(
                     () => carritoController.productosEnCarrito.isEmpty
                         ? Center(
@@ -767,13 +773,13 @@ class CarritoPageState extends State<CarritoPage> {
                               return ProductoEnCarritoWidget(
                                 producto: producto,
                                 onRemover: () {
-                                  carritoController.removerDelCarrito(index);
+                                  carritoController.removerDelCarrito(producto);
                                 },
                                 onAumentar: () {
-                                  carritoController.aumentarCantidad(index);
+                                  carritoController.aumentarCantidad(producto);
                                 },
                                 onDisminuir: () {
-                                  carritoController.disminuirCantidad(index);
+                                  carritoController.disminuirCantidad(producto);
                                 },
                               );
                             },
@@ -785,37 +791,52 @@ class CarritoPageState extends State<CarritoPage> {
                 color: colorNaranja,
                 thickness: 2,
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Total de entradas: ',
-                          style: TextStyle(
-                            color: colorNaranja,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          cantidadTotal.toString(),
-                          style: TextStyle(
+              Obx(
+                () => Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Total de entradas: ',
+                            style: TextStyle(
                               color: colorNaranja,
                               fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    Text(
-                      'Precio total: ',
-                      style: TextStyle(
-                        color: colorNaranja,
-                        fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            numberFormat.format(
+                                carritoController.obtenerCantidadTotal()),
+                            style: TextStyle(
+                                color: colorNaranja,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    ),
-                  ],
+                      Row(
+                        children: [
+                          Text(
+                            'Precio total: ',
+                            style: TextStyle(
+                              color: colorNaranja,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            numberFormat
+                                .format(carritoController.obtenerPrecioTotal()),
+                            style: TextStyle(
+                                color: colorNaranja,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Divider(
@@ -832,6 +853,7 @@ class CarritoPageState extends State<CarritoPage> {
               GooglePayButton(
                 onPaymentResult: (result) {
                   print('Resultado de pago: $result');
+                  modal();
                 },
                 paymentConfiguration:
                     PaymentConfiguration.fromJsonString(defaultGooglePay),
@@ -928,28 +950,26 @@ class CarritoPageState extends State<CarritoPage> {
     ));
   }
 
-  var cantidadTotal = 0;
-
-  void obtenerCantidadTotal() {
-    int cant = 0;
-    for (var producto in carritoController.productosEnCarrito) {
-      setState(() {
-        cant += int.tryParse(producto['cantidad'].toString()) ?? 0;
-      });
-    }
-    setState(() {
-      cantidadTotal = cant;
-    });
-  }
+  var fontSize = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    print('El carrito: ${carritoController.productosEnCarrito}');
-    print('El  directo a pagar: ${obtenerMontoTotal()}');
+    print('Payment');
+    for (var producto in _paymentItems) {
+      print('Nombre: ${producto.label}');
+      print('Fecha: ${producto.amount}');
 
-    //obtener la cantidad total de productos en el carrito sumando todas las key 'cantidad'
-    obtenerCantidadTotal();
-    print('La cantidad total de productos en el carrito es: ${cantidadTotal}');
+      print('---');
+    }
+
+    // print('El  directo a pagar: ${obtenerMontoTotal()}');
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    // Calcula el tamaño del texto basado en el ancho de la pantalla
+    setState(() {
+      fontSize = screenWidth * 0.045 * textScaleFactor;
+    });
 
     // TODO: implement build
     return Padding(
@@ -1020,15 +1040,21 @@ class CarritoPageState extends State<CarritoPage> {
                                               producto: producto,
                                               onRemover: () {
                                                 carritoController
-                                                    .removerDelCarrito(index);
+                                                    .removerDelCarrito(
+                                                        producto);
+                                                convertirProductosAPaymentItems();
                                               },
                                               onAumentar: () {
                                                 carritoController
-                                                    .aumentarCantidad(index);
+                                                    .aumentarCantidad(producto);
+                                                convertirProductosAPaymentItems();
                                               },
                                               onDisminuir: () {
                                                 carritoController
-                                                    .disminuirCantidad(index);
+                                                    .disminuirCantidad(
+                                                        producto);
+                                                print('disminuir');
+                                                convertirProductosAPaymentItems();
                                               },
                                             );
                                           },
@@ -1040,13 +1066,13 @@ class CarritoPageState extends State<CarritoPage> {
                         : barraCarrito(),
                   ),
                 )),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             moduloCarrito2
                 ? containerTotalCompra()
                 : moduloSelectInfo
                     ? containerSelectInfo()
                     : Container(),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             moduloSelectPago ? containerCheckout() : Container(),
             //Expanded(child: Container()),
             moduloFilaBtns
@@ -1062,7 +1088,7 @@ class CarritoPageState extends State<CarritoPage> {
 }
 
 class ProductoEnCarritoWidget extends StatelessWidget {
-  final Map<String, dynamic> producto;
+  final Product producto;
   final VoidCallback onRemover;
   final VoidCallback onAumentar;
   final VoidCallback onDisminuir;
@@ -1082,6 +1108,11 @@ class ProductoEnCarritoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    // Calcula el tamaño del texto basado en el ancho de la pantalla
+    final fontSize = screenWidth * 0.045 * textScaleFactor;
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -1089,7 +1120,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           children: [
             Expanded(
@@ -1110,18 +1141,16 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(Icons.event_note,
-                                  color: colorNaranja, size: 20),
+                                  color: colorNaranja, size: fontSize),
                               SizedBox(
                                 width: 5,
                               ),
                               Text(
-                                producto['nombre'],
+                                producto.nombre,
                                 style: TextStyle(
-                                  // overflow: TextOverflow.ellipsis,
-                                  color: colorNaranja,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                    color: colorNaranja,
+                                    fontSize: fontSize - 5,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -1144,10 +1173,10 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    formatoFecha(producto['fecha']),
+                                    formatoFecha(producto.fecha),
                                     style: TextStyle(
                                       color: colorNaranja,
-                                      fontSize: 12,
+                                      fontSize: fontSize - 3,
                                     ),
                                   ),
                                 ],
@@ -1180,12 +1209,14 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                       icon: Icon(Icons.remove, size: 24, color: colorMorado),
                       onPressed: onDisminuir,
                     ),
-                    Text(
-                      producto['cantidad'].toString(),
-                      style: TextStyle(
-                          color: colorMorado,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                    Obx(
+                      () => Text(
+                        producto.cantidad.toString(),
+                        style: TextStyle(
+                            color: colorMorado,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                     IconButton(
                       icon: Icon(Icons.add, size: 24, color: colorMorado),
