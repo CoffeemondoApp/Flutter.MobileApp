@@ -155,7 +155,8 @@ class IndexPageState extends State<IndexPage> {
       throw Exception('Could not launch $_urlBT');
     }
   }
-bool showAppBar = true;
+
+  bool showAppBar = true;
   @override
   Widget build(BuildContext context) {
     //imprimir el tiempo que lleva el usuario en la aplicacion
@@ -234,48 +235,59 @@ bool showAppBar = true;
         _currentIndex = newNumber;
       });
     }
-    if (_currentIndex == 4) { // índice de la página del carrito
-    showAppBar = false;
-  } else {
-    showAppBar = true;
-  }
+
+    if (_currentIndex == 4) {
+      // índice de la página del carrito
+      showAppBar = false;
+    } else {
+      showAppBar = true;
+    }
 
     final List<Widget> _tabs = <Widget>[
       Home(
           globalController: globalController,
           subirPuntos: subirPuntos,
           enviarAlGrupo: enviarAlGrupo),
-      ResenasPage(widget.tiempo_inicio, globalController: globalController, subirPuntos: subirPuntos,),
+      ResenasPage(
+        widget.tiempo_inicio,
+        globalController: globalController,
+        subirPuntos: subirPuntos,
+      ),
       Cafeterias(widget.tiempo_inicio, globalController: globalController),
-      EventosPage(widget.tiempo_inicio , subirPuntos: subirPuntos, changeIndex: changeIndex),
+      EventosPage(widget.tiempo_inicio,
+          subirPuntos: subirPuntos, changeIndex: changeIndex),
       CarritoPage(widget.tiempo_inicio),
       PerfilPage(widget.tiempo_inicio)
-      
     ];
     return SafeArea(
-  child: Scaffold(
-    backgroundColor: colorScaffold,
-    appBar: showAppBar ? // Condición para mostrar el AppBarCustom
-        PreferredSize(
-          preferredSize: Size.fromHeight(100),
-          child: AppBarCustom(
-            getNivel: getNivel,
-            subirNivel: _subirNivel,
-            urlImage: '',
-            globalController: globalController,
-          ),
-        ) : AppBar(
-        backgroundColor: colorMorado,
-        title: Text('Carrito de compras'),
-        
+      child: Scaffold(
+        backgroundColor: colorScaffold,
+        appBar: showAppBar
+            ? // Condición para mostrar el AppBarCustom
+            PreferredSize(
+                preferredSize:
+                    Size.fromHeight(MediaQuery.of(context).size.height * 0.15),
+                child: AppBarCustom(
+                  getNivel: getNivel,
+                  subirNivel: _subirNivel,
+                  urlImage: '',
+                  globalController: globalController,
+                ),
+              )
+            : AppBar(
+                backgroundColor: colorMorado,
+                title: Text('Carrito de compras'),
+              ),
+        body: Padding(
+          padding: EdgeInsets.only(top: 25.0),
+          child: _tabs[_currentIndex],
+        ),
+        bottomNavigationBar: CustomBottomBar(
+          inicio: widget.tiempo_inicio,
+          changeIndex: changeIndex,
+          currentIndex: _currentIndex,
+        ),
       ),
-    body: Padding(padding: EdgeInsets.only(top: 25.0), child: _tabs[_currentIndex],),
-    bottomNavigationBar: CustomBottomBar(
-      inicio: widget.tiempo_inicio,
-      changeIndex: changeIndex, currentIndex: _currentIndex,
-    ),
-  ),
-);
-
+    );
   }
 }

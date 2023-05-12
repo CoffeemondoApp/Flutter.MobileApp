@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Calendario.dart';
 import 'package:coffeemondo/pantallas/user_logeado/colores/colores.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +88,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
 
 //Cambia el formato de fecha ej: 13/apr/2023
   String formatoFecha(DateTime date) {
-    final formateador = DateFormat('dd/MMM/yyyy');
+    final formateador = DateFormat('dd/MMM', 'es_ES');
     return formateador.format(date);
   }
 
@@ -105,7 +104,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
           'nombre': infoEvento['nombre'],
           'fecha': fecha,
           'cantidad': 1,
-          'precio': 0.1
+          'precio': 1000
         });
       }
     });
@@ -122,6 +121,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
 
     List<Widget> fechasText = _fechasSeleccionadas.map((fechaSeleccionada) {
       return Container(
+        width: MediaQuery.of(context).size.width * 0.95,
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
@@ -135,14 +135,15 @@ class _AsistirEventoState extends State<AsistirEvento> {
           color: Colores.colorNaranja,
         ),
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.symmetric(horizontal: 10),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
                 child: Text(
                   formatoFecha(fechaSeleccionada['fecha']),
                   style: TextStyle(
-                      fontSize: 16,
+                      fontSize: fontSize - 2,
                       color: Colores.colorMorado,
                       fontWeight: FontWeight.bold),
                 ),
@@ -164,8 +165,10 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   Container(
                     child: Text(
                       fechaSeleccionada['cantidad'].toString(),
-                      style:
-                          TextStyle(fontSize: 16, color: Colores.colorMorado),
+                      style: TextStyle(
+                          fontSize: fontSize - 1,
+                          color: Colores.colorMorado,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                   IconButton(
@@ -270,7 +273,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               Container(
                 decoration: BoxDecoration(
                   boxShadow: <BoxShadow>[
@@ -284,8 +287,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   color: Colores.colorMorado,
                 ),
                 child: Container(
-          
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     children: [
                       TextoIcono(
@@ -296,8 +298,13 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       SizedBox(
                         height: 15,
                       ),
-                      Column(
-                        children: fechasText,
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: fechasText,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -391,14 +398,16 @@ class _FechasListViewState extends State<FechasListView> {
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8, // espacio horizontal entre los elementos
-      runSpacing: 8, // espacio vertical entre las filas
+      runSpacing: 2, // espacio vertical entre las filas
       children: List.generate(widget.fechaLista.length, (index) {
         final fecha = widget.fechaLista[index];
-        return FilterChip(
+        return ChoiceChip(
           label: Text(
             widget.formatoFecha(fecha),
             style: TextStyle(
-              color: Colors.white, // color del texto
+              color: _selectedChipIndices.contains(index)
+                  ? Colores.colorNaranja
+                  : Colors.white, // color del texto
             ),
           ),
           selected: _selectedChipIndices.contains(index),
@@ -411,6 +420,7 @@ class _FechasListViewState extends State<FechasListView> {
               }
             });
             widget.onFechaSelected(fecha);
+            print(_selectedChipIndices);
           },
           selectedColor: Colores.colorMorado,
           backgroundColor: Colores.colorNaranja,
