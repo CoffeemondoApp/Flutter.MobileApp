@@ -1,4 +1,5 @@
 import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/Foto.dart';
+import 'package:coffeemondo/pantallas/user_logeado/paginas/perfil/compras.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -58,17 +59,6 @@ class _CustomBottomBarProfileState extends State<CustomBottomBarProfile> {
                   },
                 ),
                 GButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FotoPage(widget.inicio)),
-                    );
-                  },
-                  icon: Icons.image,
-                  text: 'Foto de perfil',
-                ),
-                GButton(
                   icon: Icons.info_outline,
                   text: 'Editar perfil',
                   onPressed: () {
@@ -88,6 +78,17 @@ class _CustomBottomBarProfileState extends State<CustomBottomBarProfile> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => InfoUsuarioPage(widget.inicio)),
+                    );
+                  },
+                ),
+                GButton(
+                  icon: Icons.shopping_bag,
+                  text: 'Compras',
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ComprasPage(widget.inicio)),
                     );
                   },
                 ),

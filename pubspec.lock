@@ -121,6 +121,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  cloud_functions:
+    dependency: "direct main"
+    description:
+      name: cloud_functions
+      sha256: "834878a5c7962cd9f79eec19c4fc2b113089d49cc66ad57701a92732d7bb0434"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.0"
+  cloud_functions_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_functions_platform_interface
+      sha256: "8942ee262a169d0f7c7646f910dde87a008307149d3f53e02701285b8c93835d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.4.0"
+  cloud_functions_web:
+    dependency: transitive
+    description:
+      name: cloud_functions_web
+      sha256: "745aed1e4c61eef90042378eef83b00b1ba9ce90f56df999743d5ae542ea0a4e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.0"
   collection:
     dependency: transitive
     description:
@@ -261,26 +285,26 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: c129209ba55f3d4272c89fb4a4994c15bea77fb6de63a82d45fb6bc5c94e4355
+      sha256: "4491238f4fddc885bc994e304a035eb8aba2c935816b2c0b31d87f3ec6e96682"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1"
+    version: "2.12.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
       name: firebase_core_platform_interface
-      sha256: "5fab93f5b354648efa62e7cc829c90efb68c8796eecf87e0888cae2d5f3accd4"
+      sha256: b63e3be6c96ef5c33bdec1aab23c91eb00696f6452f0519401d640938c94cba2
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.2"
+    version: "4.8.0"
   firebase_core_web:
     dependency: transitive
     description:
       name: firebase_core_web
-      sha256: "18b35ce111b0a4266abf723c825bcf9d4e2519d13638cc7f06f2a8dd960c75bc"
+      sha256: "8c0f4c87d20e2d001a5915df238c1f9c88704231f591324205f5a5d2a7740a45"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.5.0"
   firebase_messaging:
     dependency: "direct main"
     description:
@@ -606,13 +630,13 @@ packages:
     source: hosted
     version: "0.15.1"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
-      sha256: "6aa2946395183537c8b880962d935877325d6a09a2867c3970c05c0fed6ac482"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.5"
+    version: "0.13.6"
   http_parser:
     dependency: transitive
     description:
