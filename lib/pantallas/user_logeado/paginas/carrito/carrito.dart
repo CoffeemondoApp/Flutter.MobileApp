@@ -36,7 +36,7 @@ class CarritoPageState extends State<CarritoPage> {
 
   final CarritoController carritoController = Get.put(CarritoController());
   // final CarritoController carritoController = Get.find();
-  final _paymentItems = <PaymentItem>[];
+  List<PaymentItem> _paymentItems = <PaymentItem>[];
 
   bool mostrarBotonPago = true;
 
@@ -46,29 +46,26 @@ class CarritoPageState extends State<CarritoPage> {
   @override
   void initState() {
     super.initState();
-
-    for (var producto in carritoController.productosEnCarrito) {
-      var precioTotal = producto['precio'] * producto['cantidad'];
-
-      if (!_paymentItems.any((item) => item.label == producto['nombre'])) {
-        _paymentItems.add(
-          PaymentItem(
-            label: producto['nombre'],
-            amount: precioTotal.toString(),
-            status: PaymentItemStatus.final_price,
-          ),
-        );
-      }
-    }
+    convertirProductosAPaymentItems();
   }
 
-  int obtenerMontoTotal() {
-    int montoTotal = 0;
+  void convertirProductosAPaymentItems() {
+    _paymentItems.clear(); // Limpiar la lista de items de pago
+    final List<PaymentItem> prueba = [];
     for (var producto in carritoController.productosEnCarrito) {
-      int precioTotal = producto['precio'] * producto['cantidad'];
-      montoTotal += precioTotal;
+      final label = producto.nombre;
+      final amount = (producto.precio * producto.cantidad.value).toString();
+
+      final paymentItem = PaymentItem(
+        label: label,
+        amount: amount,
+        status: PaymentItemStatus.final_price,
+      );
+      prueba.add(paymentItem);
     }
-    return montoTotal;
+    setState(() {
+      _paymentItems = prueba;
+    });
   }
 
   bool _visible = false;
@@ -89,6 +86,13 @@ class CarritoPageState extends State<CarritoPage> {
   bool infoGuardada2 = false;
 
   bool moduloFilaBtns = true;
+  void generarElpago(result) {
+    {
+      debugPrint('Payment Result $result');
+
+      modal();
+    }
+  }
 
   void generarCarrito() {
     if (!moduloCarrito) {
@@ -319,7 +323,7 @@ class CarritoPageState extends State<CarritoPage> {
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${numberFormat.format(obtenerMontoTotal())}',
+                        '${carritoController.obtenerPrecioTotal()}',
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 14,
@@ -356,7 +360,7 @@ class CarritoPageState extends State<CarritoPage> {
             child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  'Total de la compra: ${numberFormat.format(obtenerMontoTotal())}',
+                  'Total de la compra: ${carritoController.obtenerPrecioTotal()}',
                   style: TextStyle(
                       color: colorNaranja,
                       fontSize: 16,
@@ -777,13 +781,16 @@ class CarritoPageState extends State<CarritoPage> {
                               return ProductoEnCarritoWidget(
                                 producto: producto,
                                 onRemover: () {
-                                  carritoController.removerDelCarrito(index);
+                                  carritoController.removerDelCarrito(producto);
+                                  convertirProductosAPaymentItems();
                                 },
                                 onAumentar: () {
-                                  carritoController.aumentarCantidad(index);
+                                  carritoController.aumentarCantidad(producto);
+                                  convertirProductosAPaymentItems();
                                 },
                                 onDisminuir: () {
-                                  carritoController.disminuirCantidad(index);
+                                  carritoController.disminuirCantidad(producto);
+                                  convertirProductosAPaymentItems();
                                 },
                               );
                             },
@@ -812,7 +819,7 @@ class CarritoPageState extends State<CarritoPage> {
                           ),
                         ),
                         Text(
-                          cantidadTotal.toString(),
+                          carritoController.obtenerCantidadTotal().toString(),
                           style: TextStyle(
                               color: colorNaranja,
                               fontSize: 16,
@@ -830,7 +837,8 @@ class CarritoPageState extends State<CarritoPage> {
                           ),
                         ),
                         Text(
-                          numberFormat.format(obtenerMontoTotal()),
+                          numberFormat
+                              .format(carritoController.obtenerPrecioTotal()),
                           style: TextStyle(
                               color: colorNaranja,
                               fontSize: 16,
@@ -954,31 +962,22 @@ class CarritoPageState extends State<CarritoPage> {
     ));
   }
 
-  var cantidadTotal = 0;
-
-  void obtenerCantidadTotal() {
-    int cant = 0;
-    for (var producto in carritoController.productosEnCarrito) {
-      setState(() {
-        cant += int.tryParse(producto['cantidad'].toString()) ?? 0;
-      });
-    }
-    setState(() {
-      cantidadTotal = cant;
-    });
-  }
-
   var fontSize = 0.0;
   var isSmall = false;
 
   @override
   Widget build(BuildContext context) {
-    print('El carrito: ${carritoController.productosEnCarrito}');
-    print('El  directo a pagar: ${obtenerMontoTotal()}');
+    print('Payment');
+    for (var producto in _paymentItems) {
+      print('Nombre: ${producto.label}');
+      print('Fecha: ${producto.amount}');
+
+      print('---');
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     setState(() {
-      if (screenHeight < 650) {
+      if (screenHeight < 700) {
         isSmall = true;
       } else {
         isSmall = false;
@@ -990,8 +989,7 @@ class CarritoPageState extends State<CarritoPage> {
       fontSize = screenWidth * 0.045 * textScaleFactor;
     });
     //obtener la cantidad total de productos en el carrito sumando todas las key 'cantidad'
-    obtenerCantidadTotal();
-    print('La cantidad total de productos en el carrito es: ${cantidadTotal}');
+
     print(screenHeight);
 
     // TODO: implement build
@@ -1067,15 +1065,20 @@ class CarritoPageState extends State<CarritoPage> {
                                               producto: producto,
                                               onRemover: () {
                                                 carritoController
-                                                    .removerDelCarrito(index);
+                                                    .removerDelCarrito(
+                                                        producto);
+                                                convertirProductosAPaymentItems();
                                               },
                                               onAumentar: () {
                                                 carritoController
-                                                    .aumentarCantidad(index);
+                                                    .aumentarCantidad(producto);
+                                                convertirProductosAPaymentItems();
                                               },
                                               onDisminuir: () {
                                                 carritoController
-                                                    .disminuirCantidad(index);
+                                                    .disminuirCantidad(
+                                                        producto);
+                                                convertirProductosAPaymentItems();
                                               },
                                             );
                                           },
@@ -1109,7 +1112,7 @@ class CarritoPageState extends State<CarritoPage> {
 }
 
 class ProductoEnCarritoWidget extends StatelessWidget {
-  final Map<String, dynamic> producto;
+  final Product producto;
   final VoidCallback onRemover;
   final VoidCallback onAumentar;
   final VoidCallback onDisminuir;
@@ -1134,7 +1137,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     // Calcula el tamaño del texto basado en el ancho de la pantalla
     final fontSize = screenWidth * 0.045 * textScaleFactor;
-    final isSmall = screenHeight < 650;
+    final isSmall = screenHeight < 750;
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -1147,14 +1150,13 @@ class ProductoEnCarritoWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Container(
-                height: (screenHeight < 650)
-                    ? null
-                    : MediaQuery.of(context).size.height * 0.075,
+                height:
+                    isSmall ? null : MediaQuery.of(context).size.height * 0.075,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    (screenHeight < 650)
+                    isSmall
                         ? Row(
                             children: [
                               Icon(Icons.event_note,
@@ -1163,7 +1165,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                 width: 5,
                               ),
                               Text(
-                                producto['nombre'],
+                                producto.nombre,
                                 style: TextStyle(
                                     color: colorMorado,
                                     fontSize: fontSize - 5,
@@ -1187,7 +1189,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    producto['nombre'],
+                                    producto.nombre,
                                     style: TextStyle(
                                         color: colorNaranja,
                                         fontSize: fontSize - 5,
@@ -1199,7 +1201,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        (screenHeight < 650)
+                        isSmall
                             ? Row(
                                 children: [
                                   Icon(Icons.date_range_outlined,
@@ -1208,7 +1210,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    formatoFecha(producto['fecha']),
+                                    formatoFecha(producto.fecha),
                                     style: TextStyle(
                                       color: colorMorado,
                                       fontSize: fontSize - 3,
@@ -1232,7 +1234,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                                         width: 5,
                                       ),
                                       Text(
-                                        formatoFecha(producto['fecha']),
+                                        formatoFecha(producto.fecha),
                                         style: TextStyle(
                                           color: colorNaranja,
                                           fontSize: fontSize - 3,
@@ -1257,7 +1259,7 @@ class ProductoEnCarritoWidget extends StatelessWidget {
                         onPressed: onDisminuir,
                       ),
                       Text(
-                        producto['cantidad'].toString(),
+                        producto.cantidad.toString(),
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 16,

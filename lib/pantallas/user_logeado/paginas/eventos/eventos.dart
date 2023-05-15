@@ -1246,8 +1246,9 @@ class EventosState extends State<EventosPage> {
                             itemBuilder: (context, index) {
                               return Center(
                                 child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
                                   width:
-                                      MediaQuery.of(context).size.width * 0.9,
+                                      MediaQuery.of(context).size.width * 0.8,
                                   decoration: BoxDecoration(
                                     color: colorNaranja,
                                     borderRadius: BorderRadius.circular(10),

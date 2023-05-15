@@ -154,7 +154,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                 child: Text(
                   formatoFecha(fechaSeleccionada['fecha']),
                   style: TextStyle(
-                      fontSize: fontSize - 2,
+                      fontSize: fontSize - 4,
                       color: colorMorado,
                       fontWeight: FontWeight.bold),
                 ),
@@ -271,7 +271,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         child: TextoIcono(
                           texto: 'Fechas disponibles',
                           icono: Icons.calendar_month,
-                          tamanoTexto: fontSize,
+                          tamanoTexto: fontSize - 2,
                         ),
                       ),
                       FechasListView(
@@ -303,7 +303,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       TextoIcono(
                         texto: 'Seleccione la cantidad de entradas',
                         icono: Icons.confirmation_num_rounded,
-                        tamanoTexto: fontSize,
+                        tamanoTexto: fontSize - 2,
                       ),
                       SizedBox(
                         height: 15,
