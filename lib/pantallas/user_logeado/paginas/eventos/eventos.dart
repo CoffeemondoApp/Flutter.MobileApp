@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:coffeemondo/pantallas/user_logeado/paginas/eventos/crear_evento.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -1204,6 +1205,17 @@ class EventosState extends State<EventosPage> {
     ));
   }
 
+  void _navigateToCreateEvent(BuildContext context) async {
+    // Navega a la pantalla para crear un evento
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CrearEvento(
+                tiempo_inicio: widget.tiempo_inicio,
+              )),
+    );
+  }
+
   Widget _bodyEventos() {
     User? user = Auth().currentUser;
     print(user!.uid);
@@ -1218,11 +1230,35 @@ class EventosState extends State<EventosPage> {
     List<String> hoursList = ['00:00', '00:30', '01:00'];
     return SingleChildScrollView(
       child: (Column(children: [
-        _containerMensajeError(),
-        //expandibleCrearEvento(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _navigateToCreateEvent(context);
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                  decoration: BoxDecoration(
+                    color: morado,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Crear Evento',
+                    style: TextStyle(
+                      color: naranja,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )),
+          ],
+        ),
         Container(
           child: Container(
-            //color: Colors.black,
+            margin: EdgeInsets.only(top: 10),
             child: Column(children: [
               tituloEventos(),
               Container(
@@ -1350,17 +1386,24 @@ class EventosState extends State<EventosPage> {
                                           ),
                                         ),
                                       ),
-                                      Text('Precio:',
-                                          style: TextStyle(
-                                              color: colorMorado,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14)),
+                                      Container(
+                                        margin:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        child: Text(
+                                            'Precio: ${snapshot.data!.docs[index]['precio']}',
+                                            style: TextStyle(
+                                                color: colorMorado,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20)),
+                                      ),
                                       Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 5),
                                                 decoration: BoxDecoration(
                                                   color: colorMorado,
                                                   borderRadius:
@@ -1426,186 +1469,6 @@ class EventosState extends State<EventosPage> {
                                 ),
                               );
                             });
-//  Row(
-//                                           children: [
-//                                             InkWell(
-//                                               onTap: () {
-//                                                 // Aquí puedes agregar el código que deseas ejecutar al presionar el botón
-//                                               },
-//                                               child: Container(
-//                                                 width: 30.0,
-//                                                 height: 30.0,
-//                                                 decoration: BoxDecoration(
-//                                                   shape: BoxShape.circle,
-//                                                   color: colorMorado,
-//                                                 ),
-//                                                 child: Icon(
-//                                                   Icons.add,
-//                                                   color: colorNaranja,
-//                                                   size: 24.0,
-//                                                 ),
-//                                               ),
-//                                             )
-//                                           ],
-//                                         )
-
-                    // ListView.builder(
-                    //     scrollDirection: Axis.horizontal,
-                    //     itemCount: snapshot.data!.docs.length,
-                    //     itemBuilder: (context, index) {
-                    //       return Container(
-                    //         margin: EdgeInsets.only(
-                    //             right: MediaQuery.of(context).size.width *
-                    //                 0.02),
-                    //         width: MediaQuery.of(context).size.width * 0.8,
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //             color: Colors.orange,
-                    //             borderRadius: BorderRadius.only(
-                    //                 bottomLeft: Radius.circular(25),
-                    //                 bottomRight: Radius.circular(25)),
-                    //           ),
-                    //           child: Column(
-                    //             children: [
-                    //               SizedBox(
-                    //                 height:
-                    //                     MediaQuery.of(context).size.height *
-                    //                         0.2,
-                    //                 child: ListView.builder(
-                    //                     scrollDirection: Axis.horizontal,
-                    //                     itemCount: snapshot.data!
-                    //                         .docs[index]['imagen'].length,
-                    //                     itemBuilder: (context, index2) {
-                    //                       return Container(
-                    //                         child: Image.network(
-                    //                           snapshot.data!.docs[index]
-                    //                               ['imagen'][index2],
-                    //                           fit: BoxFit.cover,
-                    //                         ),
-                    //                       );
-                    //                     }),
-                    //               ),
-                    //               Row(
-                    //                 mainAxisAlignment:
-                    //                     MainAxisAlignment.spaceBetween,
-                    //                 children: [
-                    //                   Container(
-                    //                       margin: EdgeInsets.only(
-                    //                           left: 10, top: 10),
-                    //                       child: Column(
-                    //                         crossAxisAlignment:
-                    //                             CrossAxisAlignment.start,
-                    //                         children: [
-                    //                           Text(
-                    //                               snapshot.data!.docs[index]
-                    //                                   ['nombre'],
-                    //                               style: TextStyle(
-                    //                                   color: colorMorado,
-                    //                                   fontWeight:
-                    //                                       FontWeight.bold,
-                    //                                   fontSize: 16)),
-                    //                           Text(
-                    //                               snapshot.data!.docs[index]
-                    //                                   ['ubicacion'],
-                    //                               style: TextStyle(
-                    //                                 color: colorMorado,
-                    //                               )),
-                    //                         ],
-                    //                       )),
-                    //                   Container(
-                    //                       //color: Colors.blue,
-
-                    //                       child: Row(
-                    //                     mainAxisAlignment:
-                    //                         MainAxisAlignment.spaceBetween,
-                    //                     children: [
-                    //                       Icon(Icons.attach_money,
-                    //                           color: colorMorado),
-                    //                       Icon(Icons.edit,
-                    //                           color: colorMorado),
-                    //                       Icon(Icons.delete,
-                    //                           color: colorMorado),
-                    //                     ],
-                    //                   ))
-                    //                 ],
-                    //               ),
-                    //               Container(
-                    //                 height: 1,
-                    //                 margin:
-                    //                     EdgeInsets.only(top: 55, left: 10),
-                    //                 child: Text(
-                    //                     snapshot.data!.docs[index]
-                    //                         ['descripcion'],
-                    //                     style: TextStyle(
-                    //                       color: colorMorado,
-                    //                     )),
-                    //               ),
-                    //               Container(
-                    //                 margin: EdgeInsets.only(
-                    //                     top: 45, bottom: 25),
-                    //                 child: Text(
-                    //                     transformarFechas_string(snapshot
-                    //                         .data!.docs[index]['fecha']),
-                    //                     style: TextStyle(
-                    //                       color: colorMorado,
-                    //                     )),
-                    //               ),
-                    //               Container(
-                    //                 //color: Colors.red,
-                    //                 child: Row(
-                    //                   mainAxisAlignment:
-                    //                       MainAxisAlignment.center,
-                    //                   crossAxisAlignment:
-                    //                       CrossAxisAlignment.center,
-                    //                   children: [
-                    //                     btnAsistir(
-                    //                         snapshot.data!.docs[index].id),
-                    //                     GestureDetector(
-                    //                       onTap: () => {
-                    //                         setState(() {
-                    //                           puntaje_actual += 100;
-                    //                         }),
-                    //                         print(
-                    //                             'puntaje actual $puntaje_actual'),
-                    //                         // subirPuntaje()
-                    //                       },
-                    //                       child: Container(
-                    //                         width: MediaQuery.of(context)
-                    //                                 .size
-                    //                                 .width *
-                    //                             0.35,
-                    //                         height: MediaQuery.of(context)
-                    //                                 .size
-                    //                                 .height *
-                    //                             0.05,
-                    //                         decoration: BoxDecoration(
-                    //                             color: colorMorado,
-                    //                             borderRadius:
-                    //                                 BorderRadius.all(
-                    //                                     Radius.circular(
-                    //                                         20))),
-                    //                         child: Container(
-                    //                             alignment: Alignment(0, 0),
-                    //                             child: Text(
-                    //                               'Mas información',
-                    //                               style: TextStyle(
-                    //                                 color:
-                    //                                     Color(0xffffebdcac),
-                    //                                 fontWeight:
-                    //                                     FontWeight.bold,
-                    //                                 fontSize: 16,
-                    //                               ),
-                    //                             )),
-                    //                       ),
-                    //                     )
-                    //                   ],
-                    //                 ),
-                    //               )
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       );
-                    //     });
                   },
                 ),
               )

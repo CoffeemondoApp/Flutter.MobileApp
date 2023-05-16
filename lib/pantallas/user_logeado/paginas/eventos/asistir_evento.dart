@@ -192,9 +192,9 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         Icons.add,
                         color: colorMorado,
                       )),
+              
                 ],
               )
-              // Text('Entradas disponibles:')
             ],
           ),
         ),
