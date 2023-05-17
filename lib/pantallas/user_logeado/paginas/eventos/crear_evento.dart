@@ -147,7 +147,7 @@ class _CrearEventoState extends State<CrearEvento> {
   }
 
   _openGallery(BuildContext context) async {
-    //Funcion para abrir la galeria y obtener multiples imagenes
+    //Funcion para abrir la galeria y obtener una imagenes
     imageFiles = await ImagePicker().pickMultiImage();
     if (imageFiles != null) {
       setState(() {

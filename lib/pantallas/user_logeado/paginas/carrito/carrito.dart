@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:coffeemondo/pantallas/user_logeado/widgets/inputsFormularios.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -35,12 +38,21 @@ class CarritoPageState extends State<CarritoPage> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CarritoController carritoController = Get.put(CarritoController());
+  final GlobalController globalController = Get.put(GlobalController());
   // final CarritoController carritoController = Get.find();
   List<PaymentItem> _paymentItems = <PaymentItem>[];
 
   bool mostrarBotonPago = true;
 
   int montoTotal = 0;
+
+//InfoUsuario 
+TextEditingController nombre = TextEditingController();
+TextEditingController apellido = TextEditingController();
+TextEditingController correo = TextEditingController();
+TextEditingController telefono = TextEditingController();
+TextEditingController rut = TextEditingController();
+
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
   @override
@@ -66,6 +78,47 @@ class CarritoPageState extends State<CarritoPage> {
     setState(() {
       _paymentItems = prueba;
     });
+  }
+
+  Future<void> crearCompraApi(String token, Map<String, dynamic> datosUsuario,
+      RxList<Product> listaProductos) async {
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('crearOrden');
+
+    try {
+      final results = await callable.call(<String, dynamic>{
+        'token': token,
+        'datosUsuario': datosUsuario,
+        'estado': 'pendiente',
+        'products': listaProductos,
+      });
+      print(results.data);
+    } on FirebaseFunctionsException catch (error) {
+      print(error.message);
+    }
+  }
+
+  void pagarConGpay(result) {
+    String resultString = jsonEncode(result);
+    print(resultString);
+
+    Map<String, dynamic> resultJson = jsonDecode(resultString);
+
+    String token = resultJson['paymentMethodData']['tokenizationData']['token'];
+
+
+
+    Map<String, dynamic> datosUsuario = {
+      'nombre': nombre.text,
+      'apellido': apellido.text,
+      'email': correo.text,
+      'telefono': telefono.text,
+      'rut': '123456789'
+    };
+    if (token.isNotEmpty) {
+      print(token);
+      // crearCompraApi(token, datosUsuario, carritoController.productosEnCarrito);
+    }
   }
 
   bool _visible = false;
@@ -235,24 +288,24 @@ class CarritoPageState extends State<CarritoPage> {
 
   Widget filaBtnsCarrito() {
     return (Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         btnComprarAhora(),
-        GooglePayButton(
-          paymentConfiguration:
-              PaymentConfiguration.fromJsonString(defaultGooglePay),
-          paymentItems: _paymentItems,
-          type: GooglePayButtonType.checkout,
-          margin: const EdgeInsets.only(top: 15.0),
-          onPaymentResult: (result) => debugPrint('Payment Result $result'),
-          loadingIndicator: const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Color(0xFFff8a65),
-              ),
-            ),
-          ),
-        ),
+        // GooglePayButton(
+        //   paymentConfiguration:
+        //       PaymentConfiguration.fromJsonString(defaultGooglePay),
+        //   paymentItems: _paymentItems,
+        //   type: GooglePayButtonType.checkout,
+        //   margin: const EdgeInsets.only(top: 15.0),
+        //   onPaymentResult: (result){print(result);},
+        //   loadingIndicator: const Center(
+        //     child: CircularProgressIndicator(
+        //       valueColor: AlwaysStoppedAnimation<Color>(
+        //         Color(0xFFff8a65),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     ));
   }
@@ -383,56 +436,58 @@ class CarritoPageState extends State<CarritoPage> {
             style: TextStyle(
                 color: colorNaranja, fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          Container(
-            margin: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
-            decoration: BoxDecoration(
-              color: colorNaranja,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset(
-                    'assets/logo.png',
-                    width: 35,
-                  ),
-                  Container(
-                    child: Text(
-                      'Obtener desde la aplicacion',
-                      style: TextStyle(
-                          color: colorMorado,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
+          //   decoration: BoxDecoration(
+          //     color: colorNaranja,
+          //     borderRadius: BorderRadius.circular(20),
+          //   ),
+          //   child: Container(
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //       children: [
+          //         Image.asset(
+          //           'assets/logo.png',
+          //           width: 35,
+          //         ),
+          //         Container(
+          //           child: Text(
+          //             'Obtener desde la aplicacion',
+          //             style: TextStyle(
+          //                 color: colorMorado,
+          //                 fontSize: 14,
+          //                 fontWeight: FontWeight.bold),
+          //           ),
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
           btnIngresarInfo(),
         ],
       ),
     ));
   }
 
-  Widget textFieldInputNombre() {
-    return (Container(
-      child: TextField(
-        decoration: InputDecoration(
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(color: colorNaranja),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: colorNaranja),
-          ),
-          hintText: 'Nombre',
-          hintStyle: TextStyle(
-              color: colorNaranja, fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ));
-  }
+  // Widget textFieldInputCustom(String texto, TextEditingController controller) {
+  //   return (Container(
+  //     margin: EdgeInsets.symmetric(vertical: 10),
+  //     child: TextField(
+  //       controller: controller,
+  //       decoration: InputDecoration(
+  //         border: UnderlineInputBorder(
+  //           borderSide: BorderSide(color: colorNaranja),
+  //         ),
+  //         focusedBorder: UnderlineInputBorder(
+  //           borderSide: BorderSide(color: colorNaranja),
+  //         ),
+  //         hintText: texto,
+  //         hintStyle: TextStyle(
+  //             color: colorNaranja, fontSize: 14, fontWeight: FontWeight.bold),
+  //       ),
+  //     ),
+  //   ));
+  // }
 
   Widget containerSelectInfo() {
     return (AnimatedContainer(
@@ -447,7 +502,7 @@ class CarritoPageState extends State<CarritoPage> {
                     : MediaQuery.of(context).size.height * 0.25
                 : isSmall
                     ? MediaQuery.of(context).size.height * 0.5
-                    : MediaQuery.of(context).size.height * 0.6,
+                    : MediaQuery.of(context).size.height * 0.55,
         child: Container(
           width: MediaQuery.of(context).size.width * 0.97,
           decoration: BoxDecoration(
@@ -477,95 +532,12 @@ class CarritoPageState extends State<CarritoPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        textFieldInputNombre(),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              hintText: 'Apellido',
-                                              hintStyle: TextStyle(
-                                                  color: colorNaranja,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              hintText: 'Correo',
-                                              hintStyle: TextStyle(
-                                                  color: colorNaranja,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              hintText: 'Telefono',
-                                              hintStyle: TextStyle(
-                                                  color: colorNaranja,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: colorNaranja),
-                                              ),
-                                              hintText: 'RUT',
-                                              hintStyle: TextStyle(
-                                                  color: colorNaranja,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
+                                        nameInputCustom('Nombre', nombre),
+                                        nameInputCustom('Apellido', apellido),
+                                        emailInputCustom('Correo', correo),
+                                        phoneNumberInputCustom('Telefono', telefono),
+                                        rutInputCustom('Rut', rut),
+
                                       ],
                                     ),
                                   )),
@@ -590,7 +562,7 @@ class CarritoPageState extends State<CarritoPage> {
                                     Container(
                                         margin: EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Carlos Vasquez',
+                                          nombre.text,
                                           style: TextStyle(
                                               color: colorMorado,
                                               fontSize: 14,
@@ -603,6 +575,7 @@ class CarritoPageState extends State<CarritoPage> {
                             InkWell(
                               onTap: () {
                                 setState(() {
+                                  print('asasa');
                                   moduloSelectPago2 = false;
                                 });
                                 Future.delayed(
@@ -864,10 +837,7 @@ class CarritoPageState extends State<CarritoPage> {
               ),
               GooglePayButton(
                 width: MediaQuery.of(context).size.width * 0.8,
-                onPaymentResult: (result) {
-                  print('Resultado de pago: $result');
-                  modal();
-                },
+                onPaymentResult: pagarConGpay,
                 paymentConfiguration:
                     PaymentConfiguration.fromJsonString(defaultGooglePay),
                 paymentItems: _paymentItems,
@@ -881,33 +851,33 @@ class CarritoPageState extends State<CarritoPage> {
                   ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20)),
-                margin: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 20),
-                          child: Text(
-                            'Pagar con ',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 191, 255),
-                                fontSize: fontSize + 2,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/mercadopago.png',
-                          width: 36,
-                        ),
-                      ]),
-                ),
-              )
+              // Container(
+              //   decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(20)),
+              //   margin: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+              //   child: Container(
+              //     margin: EdgeInsets.symmetric(vertical: 5),
+              //     child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           Container(
+              //             margin: EdgeInsets.only(right: 20),
+              //             child: Text(
+              //               'Pagar con ',
+              //               style: TextStyle(
+              //                   color: Color.fromARGB(255, 0, 191, 255),
+              //                   fontSize: fontSize + 2,
+              //                   fontWeight: FontWeight.w600),
+              //             ),
+              //           ),
+              //           Image.asset(
+              //             'assets/mercadopago.png',
+              //             width: 36,
+              //           ),
+              //         ]),
+              //   ),
+              // )
             ],
           ),
         ),
@@ -918,6 +888,8 @@ class CarritoPageState extends State<CarritoPage> {
   Widget btnGuardarInfo() {
     return (InkWell(
       onTap: () {
+        if(nombre.text != '' && apellido.text != '' && correo != '' && telefono.text != '' && rut.text != ''){
+
         setState(() {
           moduloSelectInfo2 = false;
         });
@@ -936,6 +908,7 @@ class CarritoPageState extends State<CarritoPage> {
             moduloSelectPago2 = true;
           });
         });
+        }
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 70),

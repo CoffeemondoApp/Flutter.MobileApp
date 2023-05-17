@@ -21,6 +21,7 @@ class AsistirEvento extends StatefulWidget {
 
 class _AsistirEventoState extends State<AsistirEvento> {
   final CarritoController carritoController = Get.put(CarritoController());
+
   //Informacion completa del evento
   Map<String, dynamic> infoEvento = {};
 
@@ -36,10 +37,10 @@ class _AsistirEventoState extends State<AsistirEvento> {
   late DocumentReference
       _docRef; // Declarar la variable y asignarla en initState
 
-  int entradasDisponibles = 0;
   @override
   void initState() {
     super.initState();
+
     _docRef =
         FirebaseFirestore.instance.collection('eventos').doc(widget.idEvento);
     getEventoData().then((eventosData) {
@@ -94,7 +95,12 @@ class _AsistirEventoState extends State<AsistirEvento> {
   }
 
 //Agregar fecha seleccionada y darle un ticket
-  void _handleFechaSelected(DateTime fecha) {
+  void _handleFechaSelected(DateTime fecha, int index) {
+    String ticketsString = infoEvento['ticketsDispo'][index];
+    ticketsString = ticketsString.substring(1, ticketsString.length - 1);
+    // Separar los elementos utilizando la coma como delimitador
+    List<String> tickets = ticketsString.split(' ');
+
     setState(() {
       int index = _fechasSeleccionadas
           .indexWhere((element) => element['fecha'] == fecha);
@@ -103,6 +109,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
       } else {
         _fechasSeleccionadas.add({
           'nombre': infoEvento['nombre'],
+          'disponibles': tickets.length,
           'fecha': fecha,
           'cantidad': 1,
           'precio': 300
@@ -192,7 +199,13 @@ class _AsistirEventoState extends State<AsistirEvento> {
                         Icons.add,
                         color: colorMorado,
                       )),
-              
+                  Text(
+                    'Disponibles: ${fechaSeleccionada['disponibles'].toString()}',
+                    style: TextStyle(
+                        fontSize: fontSize - 1,
+                        color: colorMorado,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ],
               )
             ],
@@ -390,7 +403,7 @@ class TextoIcono extends StatelessWidget {
 //Lista de fechas disponibles
 class FechasListView extends StatefulWidget {
   final List<DateTime> fechaLista;
-  final Function(DateTime) onFechaSelected;
+  final Function(DateTime, int) onFechaSelected;
   final Function(DateTime) formatoFecha;
   FechasListView(
       {required this.fechaLista,
@@ -429,7 +442,7 @@ class _FechasListViewState extends State<FechasListView> {
                 _selectedChipIndices.remove(index);
               }
             });
-            widget.onFechaSelected(fecha);
+            widget.onFechaSelected(fecha, index);
             print(_selectedChipIndices);
           },
           selectedColor: colorMorado,

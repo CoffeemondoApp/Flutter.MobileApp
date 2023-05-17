@@ -184,3 +184,4 @@ class CarritoController extends GetxController {
     return cantidadTotal;
   }
 }
+
