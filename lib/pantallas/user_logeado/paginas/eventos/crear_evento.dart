@@ -27,7 +27,7 @@ var colorScaffold = Color(0xffffebdcac);
 bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
 
-bool esLugar = true;
+bool esLugar = false;
 int cant_imagenesEvento = 0;
 const Color morado = Color.fromARGB(255, 84, 14, 148);
 const Color naranja = Color.fromARGB(255, 255, 100, 0);

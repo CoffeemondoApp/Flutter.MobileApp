@@ -117,6 +117,7 @@ TextEditingController rut = TextEditingController();
     };
     if (token.isNotEmpty) {
       print(token);
+      modal();
       // crearCompraApi(token, datosUsuario, carritoController.productosEnCarrito);
     }
   }
