@@ -342,8 +342,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                             carritoController
                                 .agregarAlCarrito(_fechasSeleccionadas);
 
-                            Navigator.popUntil(
-                                context, ModalRoute.withName('/'));
+                            Navigator.pop(context);
                             widget.changeIndex(4);
                           }
                         : null,
