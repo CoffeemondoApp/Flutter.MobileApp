@@ -21,7 +21,7 @@ class AsistirEvento extends StatefulWidget {
 
 class _AsistirEventoState extends State<AsistirEvento> {
   final CarritoController carritoController = Get.put(CarritoController());
-
+  bool loading = true;
   //Informacion completa del evento
   Map<String, dynamic> infoEvento = {};
 
@@ -47,6 +47,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
       setState(() {
         infoEvento = eventosData;
         fechaLista = obtenerFechasDeRango(infoEvento['fecha']);
+        loading = false;
         //  entradasDisponibles = infoEvento['tickets'].length ~/ fechaLista.length;
       });
     });
@@ -251,7 +252,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       margin:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Text(
-                        infoEvento['nombre'],
+                         infoEvento['nombre'] != null ? infoEvento['nombre'] : 'Cargando...',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -287,6 +288,9 @@ class _AsistirEventoState extends State<AsistirEvento> {
                           tamanoTexto: fontSize - 2,
                         ),
                       ),
+                     if (loading)
+                      Center(child: CircularProgressIndicator(),)
+                      else
                       FechasListView(
                         fechaLista: fechaLista,
                         onFechaSelected: _handleFechaSelected,
@@ -342,8 +346,7 @@ class _AsistirEventoState extends State<AsistirEvento> {
                             carritoController
                                 .agregarAlCarrito(_fechasSeleccionadas);
 
-                            Navigator.popUntil(
-                                context, ModalRoute.withName('/'));
+                            Navigator.pop(context);
                             widget.changeIndex(4);
                           }
                         : null,
