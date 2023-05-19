@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 import '../../Direccion.dart';
 import '../cafeterias/Cafeterias.dart';
@@ -271,13 +273,58 @@ class _CrearEventoState extends State<CrearEvento> {
     // print(imagenEventoCC.text);
   }
 
+  //maskFormatter para pesos chilenos en el campo de precio unidad
+
   InputDecoration buildInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
       prefixIcon: Icon(icon, color: naranja, size: 24),
+      suffixIcon: hintText == 'Fecha del evento'
+          ? IconButton(
+              onPressed: () {
+                setState(() {
+                  fechaEventoCE.text = '';
+                  fechas_guardarEvento = '';
+                  cantidadDias = 0;
+                });
+              },
+              icon: Icon(Icons.clear, color: naranja, size: 20),
+            )
+          : null,
+      suffix: hintText == 'Precio unidad'
+          ? Text(
+              'Pesos chilenos',
+              style: TextStyle(
+                color: morado,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2,
+                fontSize: 14,
+              ),
+            )
+          : hintText == 'Capacidad máxima recinto'
+              ? Text(
+                  'Personas',
+                  style: TextStyle(
+                    color: morado,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2,
+                    fontSize: 14,
+                  ),
+                )
+              : hintText == 'Separar entradas'
+                  ? Text(
+                      'Entradas',
+                      style: TextStyle(
+                        color: morado,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2,
+                        fontSize: 14,
+                      ),
+                    )
+                  : null,
       hintText: hintText,
       hintStyle: TextStyle(
         color: morado,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w600,
         letterSpacing: 2,
         fontSize: 14,
       ),
@@ -303,7 +350,7 @@ class _CrearEventoState extends State<CrearEvento> {
           color: morado,
           fontSize: 14.0,
           height: 2.0,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
         decoration: buildInputDecoration(
             'Nombre del evento', Icons.event_note_outlined)));
@@ -325,7 +372,7 @@ class _CrearEventoState extends State<CrearEvento> {
           fontWeight: FontWeight.w900,
         ),
         decoration: buildInputDecoration(
-            'Nombre del lugar', Icons.coffee_maker_outlined)));
+            'Nombre del lugar', Icons.location_city_outlined)));
   }
 
   //Crear widget date range picker dialog para seleccionar fecha y hora de inicio y fin de evento
@@ -485,7 +532,7 @@ class _CrearEventoState extends State<CrearEvento> {
           color: morado,
           fontSize: 14.0,
           height: 2.0,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
         decoration: buildInputDecoration(
             'Fecha del evento', Icons.date_range_outlined)));
@@ -523,7 +570,7 @@ class _CrearEventoState extends State<CrearEvento> {
           color: morado,
           fontSize: 14.0,
           height: 2.0,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
@@ -539,7 +586,7 @@ class _CrearEventoState extends State<CrearEvento> {
                 (esLugar) ? 'Ubicacion del lugar' : 'Ubicacion de la cafeteria',
             hintStyle: TextStyle(
               fontSize: 14.0,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: morado,
             ))));
   }
@@ -672,14 +719,14 @@ class _CrearEventoState extends State<CrearEvento> {
         inputTextStyle: TextStyle(
             color: morado,
             letterSpacing: 2,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 14),
         suggestionBackgroundColor: Color.fromARGB(255, 255, 79, 52),
         suggestionTextStyle: TextStyle(
             color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
             fontSize: 14,
             letterSpacing: 2,
-            fontWeight: FontWeight.bold),
+            fontWeight: FontWeight.w600),
         suggestions: cafeterias_nombre,
         onChanged: (value) => {print('onChanged value: $value'), sugerencias()},
         onSubmitted: (value) => {
@@ -711,13 +758,16 @@ class _CrearEventoState extends State<CrearEvento> {
             color: morado,
             letterSpacing: 2,
             fontSize: 14,
-            fontWeight: FontWeight.bold),
+            fontWeight: FontWeight.w600),
         controller: controller,
         maxLines: null,
         maxLength: 200,
         decoration: buildInputDecoration(
             'Descripcion del evento', Icons.description_outlined));
   }
+
+  final numberFormat = NumberFormat.currency(
+      locale: 'es_MX', symbol: "\$", name: "Pesos", decimalDigits: 0);
 
 //Custom input para la configuracion de entradas al evento
   Widget customTextFormField(TextEditingController controller, String hintText,
@@ -734,14 +784,15 @@ class _CrearEventoState extends State<CrearEvento> {
         fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       controller: controller,
       maxLength: maxLength,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-      ],
       decoration: buildInputDecoration(hintText, icon),
     );
   }
+
+  NumberFormat formatCurrency = NumberFormat.simpleCurrency(
+      locale: 'es_CL', name: 'CLP', decimalDigits: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -851,17 +902,14 @@ class _CrearEventoState extends State<CrearEvento> {
                 Container(
                   margin: edgeInsets,
                   child: // Capacidad personas
-                      customTextFormField(
-                          capacidadMaximaPersonas,
-                          'Capacidad máxima de personas',
-                          Icons.person_outline,
-                          5),
+                      customTextFormField(capacidadMaximaPersonas,
+                          'Capacidad máxima recinto', Icons.person_outline, 5),
                 ),
                 Container(
                   margin: edgeInsets,
                   child: //Precio unitario tickets
                       customTextFormField(precioUnidad, 'Precio unidad',
-                          Icons.confirmation_number_outlined, 10),
+                          Icons.price_change_outlined, 10),
                 ),
                 Container(
                   margin: edgeInsets,
@@ -870,45 +918,59 @@ class _CrearEventoState extends State<CrearEvento> {
                           Icons.confirmation_number_outlined, 5),
                 ),
                 Container(
+                  height: 150,
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
                     color: morado,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   margin: edgeInsets,
-                  child: Column(children: [
-                    Row(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text('Ingresos estimados:',
-                            style: TextStyle(color: naranja)),
-                        Expanded(child: Container()),
-                        Text(
-                          '\$ $ingresosEstimados',
-                          style: TextStyle(color: naranja),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Comision(1%):', style: TextStyle(color: naranja)),
-                        Expanded(child: Container()),
-                        Text(
-                          '\$ $comision',
-                          style: TextStyle(color: naranja),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Ingresos neto', style: TextStyle(color: naranja)),
-                        Expanded(child: Container()),
-                        Text(
-                          '\$ $ingresosNeto',
-                          style: TextStyle(color: naranja),
-                        )
-                      ],
-                    ),
-                  ]),
+                        Row(
+                          children: [
+                            Text('Ingresos estimados:',
+                                style: TextStyle(color: naranja)),
+                            Expanded(child: Container()),
+                            Text(
+                              '${formatCurrency.format(ingresosEstimados)}',
+                              style: TextStyle(
+                                  color: naranja,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Comision(1%):',
+                                style: TextStyle(color: naranja)),
+                            Expanded(child: Container()),
+                            Text(
+                              '${formatCurrency.format(comision)}',
+                              style: TextStyle(
+                                  color: naranja,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Ingresos neto',
+                                style: TextStyle(color: naranja)),
+                            Expanded(child: Container()),
+                            Text(
+                              '${formatCurrency.format(ingresosNeto)}',
+                              style: TextStyle(
+                                  color: naranja,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ]),
                 ),
                 GestureDetector(
                   onTap: () {
