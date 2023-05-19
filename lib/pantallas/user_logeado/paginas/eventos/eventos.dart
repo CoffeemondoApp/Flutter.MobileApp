@@ -1396,14 +1396,14 @@ class EventosState extends State<EventosPage> {
                                                 label: Container(
                                                   child: Text(
                                                     snapshot.data!.docs[index]
-                                                                ['cafeteria'] !=
+                                                                ['lugar'] !=
                                                             ''
                                                         ? snapshot.data!
                                                                 .docs[index]
-                                                            ['cafeteria']
+                                                            ['lugar']
                                                         : snapshot.data!
                                                                 .docs[index]
-                                                            ['lugar'],
+                                                            ['cafeteria'],
                                                     style: TextStyle(
                                                         color: colorNaranja,
                                                         fontSize: 12,

@@ -1609,7 +1609,7 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
       appBar: AppBarcustom(),
       body: SingleChildScrollView(child: _bodyInfoUsuario()),
       bottomNavigationBar:
-          CustomBottomBarProfile(inicio: widget.inicio, index: 3),
+          CustomBottomBarProfile(inicio: widget.inicio, index: 2),
     );
   }
 }

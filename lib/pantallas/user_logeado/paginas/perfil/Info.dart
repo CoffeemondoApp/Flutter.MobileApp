@@ -510,7 +510,7 @@ class InfoApp extends State<InfoPage> {
             child: BotonEditarInfo()),
       ])),
       bottomNavigationBar:
-          CustomBottomBarProfile(inicio: widget.inicio, index: 2),
+          CustomBottomBarProfile(inicio: widget.inicio, index: 1),
     );
   }
 }
