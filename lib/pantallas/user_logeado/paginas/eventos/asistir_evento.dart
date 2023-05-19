@@ -119,6 +119,16 @@ class _AsistirEventoState extends State<AsistirEvento> {
     });
   }
 
+  void agregarAlCarrito() {
+    carritoController.agregarAlCarrito(_fechasSeleccionadas);
+
+    Navigator.pop(context);
+    widget.changeIndex(4);
+  }
+
+  bool btnCarritoPresionado = false;
+  bool carritoCargado = false;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -193,22 +203,33 @@ class _AsistirEventoState extends State<AsistirEvento> {
                   IconButton(
                       onPressed: () {
                         setState(() {
-                          fechaSeleccionada['cantidad']++;
+                          if (fechaSeleccionada['cantidad'] <
+                              fechaSeleccionada['disponibles'])
+                            fechaSeleccionada['cantidad']++;
                         });
                       },
                       icon: Icon(
                         Icons.add,
                         color: colorMorado,
                       )),
-                  Text(
-                    'Disponibles: ${fechaSeleccionada['disponibles'].toString()}',
-                    style: TextStyle(
-                        fontSize: fontSize - 1,
-                        color: colorMorado,
-                        fontWeight: FontWeight.bold),
-                  ),
                 ],
-              )
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: morado,
+                ),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Text(
+                    '${(fechaSeleccionada['disponibles'] - fechaSeleccionada['cantidad']).toString()}',
+                    style: TextStyle(
+                        fontSize: fontSize - 3,
+                        color: naranja,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -252,7 +273,9 @@ class _AsistirEventoState extends State<AsistirEvento> {
                       margin:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Text(
-                         infoEvento['nombre'] != null ? infoEvento['nombre'] : 'Cargando...',
+                        infoEvento['nombre'] != null
+                            ? infoEvento['nombre']
+                            : 'Cargando...',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -288,14 +311,16 @@ class _AsistirEventoState extends State<AsistirEvento> {
                           tamanoTexto: fontSize - 2,
                         ),
                       ),
-                     if (loading)
-                      Center(child: CircularProgressIndicator(),)
+                      if (loading)
+                        Center(
+                          child: CircularProgressIndicator(),
+                        )
                       else
-                      FechasListView(
-                        fechaLista: fechaLista,
-                        onFechaSelected: _handleFechaSelected,
-                        formatoFecha: formatoFecha,
-                      ),
+                        FechasListView(
+                          fechaLista: fechaLista,
+                          onFechaSelected: _handleFechaSelected,
+                          formatoFecha: formatoFecha,
+                        ),
                     ],
                   ),
                 ),
@@ -340,30 +365,72 @@ class _AsistirEventoState extends State<AsistirEvento> {
               Expanded(child: Container()),
               Row(
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: _fechasSeleccionadas.isNotEmpty
-                        ? () {
-                            carritoController
-                                .agregarAlCarrito(_fechasSeleccionadas);
-
-                            Navigator.pop(context);
-                            widget.changeIndex(4);
+                  InkWell(
+                    onTap: _fechasSeleccionadas.isNotEmpty
+                        ? () async {
+                            print("productos agregados al carrito");
+                            print(_fechasSeleccionadas);
+                            setState(() {
+                              btnCarritoPresionado = !btnCarritoPresionado;
+                            });
+                            await Future.delayed(Duration(seconds: 3), () {
+                              setState(() {
+                                carritoCargado = !carritoCargado;
+                              });
+                            });
+                            Future.delayed(Duration(seconds: 1), () {
+                              agregarAlCarrito();
+                            });
                           }
                         : null,
-                    icon: Icon(
-                      Icons.add_shopping_cart,
-                      color: colorNaranja,
-                    ),
-                    label: Text(
-                      'Agregar al carrito',
-                      style: TextStyle(
-                          color: _fechasSeleccionadas.isNotEmpty
-                              ? colorNaranja
-                              : Colors.grey),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(colorMorado),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      decoration: BoxDecoration(
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(20),
+                        color: colorMorado,
+                      ),
+                      child: Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.shopping_cart_outlined,
+                              color: colorNaranja,
+                            ),
+                            btnCarritoPresionado
+                                ? //hacer un loading recto en el boton
+                                Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    width: 100,
+                                    child: LinearProgressIndicator(
+                                      backgroundColor: Colors.white,
+                                      semanticsLabel: 'Cargando carrito',
+                                      semanticsValue: 'Cargando carrito',
+                                      color: Colors.white,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          colorNaranja),
+                                      value: carritoCargado ? 1 : null,
+                                    ),
+                                  )
+                                : Text(
+                                    'Agregar al carrito',
+                                    style: TextStyle(
+                                        fontSize: fontSize - 2,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorNaranja),
+                                  ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],

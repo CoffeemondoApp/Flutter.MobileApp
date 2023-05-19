@@ -261,6 +261,7 @@ class IndexPageState extends State<IndexPage> {
     ];
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: colorScaffold,
         appBar: showAppBar
             ? // Condición para mostrar el AppBarCustom

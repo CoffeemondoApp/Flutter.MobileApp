@@ -46,12 +46,12 @@ class CarritoPageState extends State<CarritoPage> {
 
   int montoTotal = 0;
 
-//InfoUsuario 
-TextEditingController nombre = TextEditingController();
-TextEditingController apellido = TextEditingController();
-TextEditingController correo = TextEditingController();
-TextEditingController telefono = TextEditingController();
-TextEditingController rut = TextEditingController();
+//InfoUsuario
+  TextEditingController nombre = TextEditingController();
+  TextEditingController apellido = TextEditingController();
+  TextEditingController correo = TextEditingController();
+  TextEditingController telefono = TextEditingController();
+  TextEditingController rut = TextEditingController();
 
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
@@ -105,8 +105,6 @@ TextEditingController rut = TextEditingController();
     Map<String, dynamic> resultJson = jsonDecode(resultString);
 
     String token = resultJson['paymentMethodData']['tokenizationData']['token'];
-
-
 
     Map<String, dynamic> datosUsuario = {
       'nombre': nombre.text,
@@ -312,6 +310,9 @@ TextEditingController rut = TextEditingController();
   }
 
   Widget barraCarrito() {
+    String productosText = carritoController.productosEnCarrito.length > 1
+        ? 'productos'
+        : 'producto';
     return (Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,7 +331,7 @@ TextEditingController rut = TextEditingController();
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${carritoController.productosEnCarrito.length} productos',
+                        '${carritoController.productosEnCarrito.length} $productosText',
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 14,
@@ -377,7 +378,7 @@ TextEditingController rut = TextEditingController();
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${carritoController.obtenerPrecioTotal()}',
+                        '${numberFormat.format(carritoController.obtenerPrecioTotal())}',
                         style: TextStyle(
                             color: colorMorado,
                             fontSize: 14,
@@ -512,7 +513,7 @@ TextEditingController rut = TextEditingController();
           ),
           child: Container(
               margin: EdgeInsets.symmetric(
-                  vertical: 10, horizontal: infoGuardada && isSmall ? 10 : 20),
+                  vertical: 10, horizontal: infoGuardada && isSmall ? 10 : 10),
               child: moduloSelectInfo2
                   ? !moduloIngresarInfo2
                       ? containerSelectInputInfo()
@@ -527,18 +528,18 @@ TextEditingController rut = TextEditingController();
                               ),
                               Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.3,
+                                      MediaQuery.of(context).size.height * 0.40,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         nameInputCustom('Nombre', nombre),
                                         nameInputCustom('Apellido', apellido),
                                         emailInputCustom('Correo', correo),
-                                        phoneNumberInputCustom('Telefono', telefono),
+                                        phoneNumberInputCustom(
+                                            'Telefono', telefono),
                                         rutInputCustom('Rut', rut),
-
                                       ],
                                     ),
                                   )),
@@ -613,7 +614,7 @@ TextEditingController rut = TextEditingController();
                                     Container(
                                         margin: EdgeInsets.only(left: 6),
                                         child: Text(
-                                          '14.234.423-5',
+                                          rut.text,
                                           style: TextStyle(
                                               color: colorMorado,
                                               fontSize: 14,
@@ -731,6 +732,7 @@ TextEditingController rut = TextEditingController();
               SizedBox(height: 10),
               SingleChildScrollView(
                 child: Container(
+                  width: MediaQuery.of(context).size.width * 0.92,
                   height: isSmall
                       ? MediaQuery.of(context).size.height * 0.15
                       : MediaQuery.of(context).size.height * 0.27,
@@ -889,26 +891,29 @@ TextEditingController rut = TextEditingController();
   Widget btnGuardarInfo() {
     return (InkWell(
       onTap: () {
-        if(nombre.text != '' && apellido.text != '' && correo != '' && telefono.text != '' && rut.text != ''){
-
-        setState(() {
-          moduloSelectInfo2 = false;
-        });
-        Future.delayed(const Duration(milliseconds: 500), () {
+        if (nombre.text != '' &&
+            apellido.text != '' &&
+            correo != '' &&
+            telefono.text != '' &&
+            rut.text != '') {
           setState(() {
-            infoGuardada = true;
+            moduloSelectInfo2 = false;
           });
-        });
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          setState(() {
-            moduloSelectPago = true;
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              infoGuardada = true;
+            });
           });
-        });
-        Future.delayed(const Duration(milliseconds: 1500), () {
-          setState(() {
-            moduloSelectPago2 = true;
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            setState(() {
+              moduloSelectPago = true;
+            });
           });
-        });
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            setState(() {
+              moduloSelectPago2 = true;
+            });
+          });
         }
       },
       child: Container(

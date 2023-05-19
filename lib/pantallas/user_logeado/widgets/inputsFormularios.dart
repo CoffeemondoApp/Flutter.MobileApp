@@ -9,6 +9,11 @@ Widget textFieldInputCustom(String texto, TextEditingController controller,
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: TextField(
+      style: TextStyle(
+          color: colorNaranja,
+          letterSpacing: 2,
+          fontSize: 14,
+          fontWeight: FontWeight.bold),
       controller: controller,
       decoration: InputDecoration(
         border: UnderlineInputBorder(
@@ -39,13 +44,17 @@ Widget nameInputCustom(String texto, TextEditingController controller) {
 }
 
 Widget rutInputCustom(String texto, TextEditingController controller) {
+  var rutFormatter = MaskTextInputFormatter(
+      mask: '##.###.###-#',
+
+      //permitir letra K en el ultimo digito
+      filter: {"#": RegExp(r'[0-9kK]')},
+      type: MaskAutoCompletionType.lazy);
   return textFieldInputCustom(
     texto,
     controller,
     TextInputType.phone,
-    [
-      FilteringTextInputFormatter.digitsOnly,
-    ],
+    [rutFormatter],
   );
 }
 
